@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import pandas as pd
 
-from engine import Strategy
+from functools import lru_cache
+from pathlib import Path
+
+from engine import CASH, Strategy
 from strategies_momentum import tr_index, trailing
 
 # ETF utilisés par Keller qui n'existaient pas encore, remplacés par l'équivalent le plus ancien :
@@ -167,6 +170,46 @@ def uniq(*groups):
     return out
 
 
+# --------------------------------------------------------------------------
+# RotationShield (Nathanaël Dumortier, 2026) : la logique de canari de DAA,
+# avec le S&P 500 seul en offensive et du cash en défensive. https://rotationshield.be
+# --------------------------------------------------------------------------
+RS_CANARY = ["VWO", "TIP"]
+DAILY = Path(__file__).resolve().parent / "data" / "daily"
+
+
+@lru_cache(maxsize=1)
+def rs_canary_table() -> dict:
+    """Nombre de canaris négatifs à chaque fin de mois, comme sur rotationshield.be :
+    score 13612W calculé chaque jour (1, 3, 6 et 12 mois = 21, 63, 126 et 252 séances),
+    puis moyenné sur les 5 dernières séances du mois. Clé : le mois (Period) de la décision."""
+    try:
+        px = pd.concat({t: pd.read_csv(DAILY / f"{t}.csv", index_col=0, parse_dates=True).iloc[:, 0]
+                        for t in RS_CANARY}, axis=1, sort=True).dropna()
+    except FileNotFoundError:
+        return {}
+    score = sum(k * (px / px.shift(n) - 1) for k, n in ((12, 21), (4, 63), (2, 126), (1, 252)))
+    score = score.dropna()
+    months = score.index.to_period("M")
+    out = {}
+    for m, s in score.groupby(months):
+        if len(s) >= 5:
+            out[m] = int((s.iloc[-5:].mean() <= 0).sum())
+    return out
+
+
+def rotationshield(hist):
+    t = hist.index[-1]
+    bad = rs_canary_table().get(t)
+    if bad is None:  # pas de cours quotidiens : même score sur les fins de mois
+        bad = int((mom_13612w(hist[RS_CANARY]) <= 0).sum())
+    spy = 1 - min(1.0, bad / 2)
+    w: dict = {}
+    add(w, "SPY", spy)
+    add(w, CASH, 1 - spy)
+    return w
+
+
 KELLER = [
     Strategy(
         id="vaa", name="Vigilant Asset Allocation (VAA-G4)",
@@ -185,7 +228,19 @@ KELLER = [
                         "Canaris : VWO et BND. Chaque canari négatif fait passer 50 % du portefeuille en défensif.",
                         "Partie offensive : les 6 meilleurs des 12 actifs risqués, à parts égales.",
                         "Partie défensive : le meilleur de SHY, IEF et LQD."],
-              "variant_note": "[RotationShield](https://rotationshield.be) applique la même logique de canari avec VWO et TIP."}),
+              "variant_note": "[RotationShield](strategie:rotationshield) applique la même logique de canari au seul S&P 500, avec VWO et TIP."}),
+    Strategy(
+        id="rotationshield", name="RotationShield (DAA sur le S&P 500)",
+        assets=["SPY"] + RS_CANARY, weights=rotationshield, lookback=12, family="Keller", uses_cash=True,
+        meta={"published": "2026-09", "author": "Nathanaël Dumortier (2026), d'après Keller & Keuning",
+              "note": "Les deux canaris de DAA pilotent un seul actif : le S&P 500, ou du cash",
+              "rules": ["Chaque jour : score 13612W (12×r1 + 4×r3 + 2×r6 + r12) des canaris VWO (émergents) et TIP (obligations indexées sur l'inflation).",
+                        "Fin de mois : moyenne du score sur les 5 dernières séances ; seul son signe compte.",
+                        "0 canari négatif : 100 % S&P 500. 1 canari négatif : 50 % S&P 500, 50 % cash. 2 canaris négatifs : 100 % cash."],
+              "variant_note": "Version testée ici avec les ETF américains (SPY, VWO, TIP) et les T-bills. Le site "
+                              "[rotationshield.be](https://rotationshield.be) publie le signal du mois avec des équivalents "
+                              "européens (SPYL pour le S&P 500, ETF UCITS pour les canaris) et un compte d'épargne en euros : "
+                              "son signal peut ponctuellement différer de celui-ci."}),
     Strategy(
         id="paa", name="Protective Asset Allocation (PAA2)",
         assets=uniq(PAA_RISKY, PAA_SAFE), weights=paa, lookback=13, family="Keller",

@@ -201,7 +201,20 @@
       "Beaucoup de paramètres (12 actifs, 6 retenus, 2 canaris) pour un historique limité.",
       "Rotation élevée : des changements presque tous les mois."
     ],
-    "a_savoir": "[RotationShield](https://rotationshield.be) applique la même idée de canari, avec VWO et TIP comme sentinelles."
+    "a_savoir": "[RotationShield](strategie:rotationshield) applique la même idée de canari au seul S&P 500, avec VWO et TIP comme sentinelles et du cash en repli. Voir la comparaison [DAA ou RotationShield](https://laboetf.eu/comparer/daa-ou-rotationshield/)."
+  },
+  "rotationshield": {
+    "idee": "La logique de canari de [DAA](strategie:daa), appliquée à un seul actif : deux canaris, les actions émergentes (VWO) et les obligations indexées sur l'inflation (TIP), décident chaque mois de la part investie dans le S&P 500 (100, 50 ou 0 %). Le reste attend en cash. Le signal est publié chaque mois sur [rotationshield.be](https://rotationshield.be).",
+    "forces": [
+      "Garde l'essentiel du rendement du S&P 500 avec des baisses bien plus faibles : -13 % au pire depuis juillet 2008, contre -42 %.",
+      "Une seule décision par mois, avec un seul ETF et du cash : simple à appliquer, sans fonds obligataire (pas de taxe Reynders en Belgique)."
+    ],
+    "faiblesses": [
+      "Tout repose sur le S&P 500, le meilleur marché de la période : c'est lui, plus que les canaris, qui explique l'écart avec le DAA original.",
+      "Change d'exposition environ cinq fois par an : les frais et les taxes sur transactions comptent.",
+      "Depuis son début en 2006, le backtest perd -24 % en 2007-2009 : la période commune, qui commence en juillet 2008, ne montre pas le début de cette baisse. Sur [rotationshield.be](https://rotationshield.be), le backtest part de mars 2008 : 11,2 % par an et -16 % au pire, avec la TOB belge."
+    ],
+    "a_savoir": "Conçue en 2026, avec tout l'historique sous les yeux. Le lissage du score sur les 5 dernières séances du mois ajoute à lui seul environ un point et demi de rendement par an dans ce backtest : un détail d'exécution qui pèse lourd, donc à prendre avec prudence."
   },
   "paa": {
     "idee": "Plus il y a d'actifs risqués sous leur moyenne de 12 mois, plus la part d'obligations intermédiaires grandit, jusqu'à 100 % quand la moitié des 12 actifs sont en baisse.",
@@ -218,7 +231,7 @@
   "haa": {
     "idee": "Un seul canari, les obligations indexées sur l'inflation (TIP). Tant qu'elles montent, on détient les 4 actifs les plus forts parmi 8 ; sinon, tout passe en T-bills ou en obligations intermédiaires.",
     "forces": [
-      "Le meilleur ratio de Sharpe et l'un des plus faibles drawdowns du site (environ -9 %).",
+      "Le plus faible drawdown du site (environ -9 %) et l'un des meilleurs ratios de Sharpe.",
       "Positif en 2022 (+3,2 %) quand presque tout baissait."
     ],
     "faiblesses": [
