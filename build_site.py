@@ -81,6 +81,11 @@ def m_long(p: str) -> str:
     return f"{MOIS_LONG[int(m) - 1]} {y}"
 
 
+def de(mot: str) -> str:
+    """« de octobre » -> « d'octobre »."""
+    return ("d'" if mot[:1].lower() in "aeiouyéèêâàîôûh" else "de ") + mot
+
+
 def next_month(p: str) -> str:
     y, m = map(int, p.split("-")[:2])
     return f"{y + (m == 12)}-{(m % 12) + 1:02d}"
@@ -93,8 +98,11 @@ def num(v, d=1) -> str:
 def pct(v, d=1, sign=False) -> str:
     if v is None:
         return "—"
-    s = num(v * 100, d)
-    return ("+" if sign and v > 0 else "") + s + NBSP + "%"
+    x = v * 100
+    if abs(x) < 0.5 * 10 ** -d:   # évite « -0,0 % »
+        x = 0.0
+    s = num(x, d)
+    return ("+" if sign and x > 0 else "") + s + NBSP + "%"
 
 
 def dec(v, d=2) -> str:
@@ -156,7 +164,7 @@ def page(head_tpl: str, body_tpl: str, *, cfg: dict, path: str, title: str, desc
     head_tpl = (head_tpl.replace('url("fonts/', 'url("/fonts/').replace('href="favicon', 'href="/favicon')
                 .replace('href="apple-touch-icon', 'href="/apple-touch-icon'))
     body = body_tpl
-    body = body.replace('href="https://laboetf.netlify.app/', 'href="/')  # liens du gabarit vers le site publié
+    body = body.replace('href="https://laboetf.eu/', 'href="/').replace('href="https://laboetf.netlify.app/', 'href="/')  # liens du gabarit vers le site publié
     body = body.replace('href="#signaux"', 'href="/signaux/"').replace('href="#comparer"', 'href="/comparer/"')
     # liens de navigation réels
     body = body.replace('class="brand" href="#"', 'class="brand" href="/"')
@@ -186,12 +194,13 @@ def intro_sentence(data, ref) -> str:
     sharper = sum((s["stats_common"]["sharpe"] or -9) > rs["sharpe"] for s in strats)
     shallower = sum(s["stats_common"]["max_dd"] > rs["max_dd"] for s in strats)
     name = "les actions mondiales" if ref["id"] == "acwi" else "le S&amp;P 500"
+    poss = "leurs" if ref["id"] == "acwi" else "ses"
     verb = lambda k: "ont" if k > 1 else "a"
     sh = f"toutes les {n}" if shallower == n else str(shallower)
     sp = "toutes" if sharper == n else str(sharper)
     return (f"Depuis {m_label(data['common_window'][0])}, <b>{better} stratégie{'s' if better > 1 else ''} sur {n}</b> "
             f"{verb(better)} rapporté plus que {name} ({pct(rs['cagr'])} par an). Mais <b>{sh}</b> {verb(shallower)} "
-            f"subi une pire baisse moins profonde que ses {pct(rs['max_dd'], 0)}, et <b>{sp}</b> {verb(sharper)} "
+            f"subi une pire baisse moins profonde que {poss} {pct(rs['max_dd'], 0)}, et <b>{sp}</b> {verb(sharper)} "
             f"mieux rémunéré chaque unité de risque. La vraie question n'est pas seulement combien une stratégie "
             f"rapporte, mais ce qu'elle fait traverser pour y arriver.")
 
@@ -234,7 +243,7 @@ def board_html(data, ref) -> str:
         <ul class="method">
           <li>Période commune <b>{m_label(c0)} → {m_label(c1)}</b></li>
           <li>Frais <b>{num(data['cost_per_trade'] * 100, 2)}{NBSP}%</b> par transaction</li>
-          <li>Rééquilibrage <b>fin de mois</b></li>
+          <li>Signaux <b>fin de mois</b> (portefeuilles fixes : rééquilibrage annuel)</li>
           <li>Devise <b>USD</b></li>
         </ul>
         {fam_links()}
@@ -243,7 +252,7 @@ def board_html(data, ref) -> str:
         <thead><tr><th scope="col">Stratégie</th><th scope="col">CAGR</th><th scope="col">Sharpe</th>
           <th scope="col">Max DD</th><th scope="col">Récup.</th><th scope="col">Pire année</th></tr></thead>
         <tbody>{''.join(trs)}</tbody></table></div>
-      <p class="note-under">Période commune de {m_label(c0)} à {m_label(c1)}, frais inclus. CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet. Récup. : plus longue période passée sous un sommet précédent.</p>"""
+      <p class="note-under">Période commune de {m_label(c0)} à {m_label(c1)}, frais inclus. CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet. Récup. : plus longue période passée sous un sommet précédent. Pire année : pire année civile complète ({int(c0[:4]) + (c0[5:7] != "01")}-{int(c1[:4]) - (c1[5:7] != "12")}), sans le début de {c0[:4]} ni l'année en cours.</p>"""
 
 
 def rules_for(s) -> list[str]:
@@ -298,7 +307,7 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
         ("Début", lambda x: m_label(x["start"])), ("CAGR", lambda x: pct(x["cagr"])),
         ("Volatilité", lambda x: pct(x["vol"])), ("Sharpe", lambda x: dec(x["sharpe"])),
         ("Max drawdown", lambda x: pct(x["max_dd"])), ("Plus longue période sous l'eau", uw),
-        ("Meilleure année", lambda x: pct(x["best_year"], 1, True)), ("Pire année", lambda x: pct(x["worst_year"], 1, True)),
+        ("Meilleure année civile complète", lambda x: pct(x["best_year"], 1, True)), ("Pire année civile complète", lambda x: pct(x["worst_year"], 1, True)),
         ("Pire 5 ans (annualisé)", lambda x: pct(x["roll5_min"], 1, True)),
         ("Pire 10 ans (annualisé)", lambda x: pct(x["roll10_min"], 1, True)),
     ]
@@ -367,6 +376,7 @@ def alloc_text(w: dict) -> str:
         groups.setdefault(round(v, 3), []).append("Cash" if k == "CASH" else k)
     parts = []
     for v, ks in sorted(groups.items(), key=lambda kv: -kv[0]):
+        ks = sorted(ks, key=lambda k: (k == "Cash", k))
         parts.append(f"{weight_text(v)} {ks[0]}" if len(ks) == 1 else f"{weight_text(v)} chacun : {', '.join(ks)}")
     return " · ".join(parts)
 
@@ -642,7 +652,7 @@ def pair_html(c, data, by_id) -> str:
       </div><div class="stack">
         <section class="panel"><h2>Rendement par année</h2>
           <table class="metrics cmp-years"><thead><tr><th scope="col"></th>{"".join(f'<th scope="col"><i class="sw" style="background:{CMP_COLORS[k]}"></i></th>' for k in range(2))}</tr></thead><tbody>{yrows}</tbody></table>
-          <p class="sub" style="margin:0">* année incomplète.</p></section>
+          <p class="sub" style="margin:0">* année incomplète, non retenue pour la « pire année ».</p></section>
       </div></div>
       <section class="doc"><h2>Autres comparaisons</h2><p>{" · ".join(f'<a href="/comparer/{pair_slug(x)}/">{e(x["titre"])}</a>' for x in others)}</p></section>
       <p class="note-under">Backtests sur des ETF américains, dividendes réinvestis, avant impôts. Les performances passées ne préjugent pas des performances futures.</p>"""
@@ -739,7 +749,7 @@ def clip(t: str, n=160) -> str:
 # --------------------------------------------------------------------------
 def build(root: Path = ROOT) -> list[str]:
     cfg = json.loads(CONFIG.read_text(encoding="utf-8")) if CONFIG.exists() else {
-        "site_url": "https://laboetf.netlify.app"}
+        "site_url": "https://laboetf.eu"}
     data = json.loads((SITE / "strategies.json").read_text(encoding="utf-8"))
     fiches = json.loads((SITE / "fiches.json").read_text(encoding="utf-8")) if (SITE / "fiches.json").exists() else {}
     uc = json.loads((SITE / "ucits.json").read_text(encoding="utf-8")) if (SITE / "ucits.json").exists() else None
@@ -809,7 +819,7 @@ def build(root: Path = ROOT) -> list[str]:
     write("signaux/index.html",
           page(head_tpl, body_tpl, path="signaux/", nav="signaux", static=True, content=signals_html(data),
                title=f"Signaux des stratégies ETF pour {m_long(nm)} (GEM, DAA, VAA…) | Labo ETF",
-               desc=clip(f"Les allocations de {m_long(nm)} de toutes les stratégies ETF du site : ce qui change, ce qui "
+               desc=clip(f"Les allocations {de(m_long(nm))} de toutes les stratégies ETF du site : ce qui change, ce qui "
                          "reste en place, calculé sur la dernière clôture mensuelle."), **common))
     for slug, fam in FAMILLES.items():
         write(f"{slug}/index.html",

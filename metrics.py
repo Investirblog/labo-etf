@@ -10,15 +10,18 @@ def _cagr(r: pd.Series) -> float:
 
 
 def drawdown(r: pd.Series) -> pd.Series:
+    """Baisse depuis le plus haut. Le capital de départ (1) compte comme premier sommet :
+    une stratégie qui perd dès son premier mois est bien sous l'eau."""
     eq = (1 + r).cumprod()
-    return eq / eq.cummax() - 1
+    return eq / eq.cummax().clip(lower=1.0) - 1
 
 
 def underwater(r: pd.Series) -> tuple[int, str | None, str | None, bool]:
-    """Plus longue période sous un sommet précédent : (mois, début, fin, toujours en cours)."""
+    """Plus longue période sous un sommet précédent : (mois, début, fin, toujours en cours).
+    Le capital de départ (1) compte comme premier sommet."""
     eq = (1 + r).cumprod().to_numpy()
     idx = list(r.index)
-    peak, best, start, cur_start = -np.inf, (0, None, None, False), None, None
+    peak, best, start, cur_start = 1.0, (0, None, None, False), None, None
     run = 0
     for k, v in enumerate(eq):
         if v >= peak - 1e-12:
@@ -46,7 +49,9 @@ def stats(r: pd.Series, rf: pd.Series) -> dict:
     ex = r - rf
     dd = drawdown(r)
     trough = dd.idxmin()
-    peak = (1 + r).cumprod().loc[:trough].idxmax()
+    eq_to_trough = (1 + r).cumprod().loc[:trough]
+    # sommet : le capital de départ (mois précédant le début) s'il n'a jamais été dépassé
+    peak = eq_to_trough.idxmax() if eq_to_trough.max() >= 1.0 else r.index[0] - 1
     after = dd.loc[trough:]
     recovered = after[after >= 0]
     downside = np.sqrt((np.minimum(ex, 0) ** 2).mean()) * np.sqrt(12)

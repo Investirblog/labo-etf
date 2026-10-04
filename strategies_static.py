@@ -44,9 +44,10 @@ STATIC = [
           published="1998-01", author="Bill Schultheis (1998)",
           note="60 % d'actions réparties en six blocs égaux, 40 % d'obligations"),
     fixed("larry", "Larry Portfolio",
-          {"IWN": 15, "SCZ": 8, "EEM": 7, "IEF": 70},
+          {"IWN": 15, "SCZ": 7.5, "EEM": 7.5, "IEF": 70},
           published="2014-01", author="Larry Swedroe (2014)",
           note="30 % d'actions choisies pour leur rendement élevé, 70 % d'obligations d'État",
-          variant_note="Swedroe vise des petites capitalisations « value » hors USA ; faute d'ETF américain "
-                       "ancien, on prend les petites capitalisations internationales (SCZ)."),
+          variant_note="Swedroe vise des petites capitalisations « value » hors USA et des actions émergentes "
+                       "« value » ; faute d'ETF américains assez anciens, on prend les petites capitalisations "
+                       "internationales (SCZ) et les émergents (EEM)."),
 ]

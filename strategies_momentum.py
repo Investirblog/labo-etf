@@ -117,7 +117,7 @@ MOMENTUM = [
         id="adm_cash", name="Accelerating Dual Momentum (variante cash)",
         assets=["SPY", "SCZ"], weights=adm(bonds=CASH), lookback=6,
         family="Momentum", uses_cash=True,
-        meta={"published": "2026-09", "author": "Variante testée par ETF Strategy Lab (2026)",
+        meta={"published": "2026-09", "author": "Variante testée par Labo ETF (2026)",
               "note": "Comme ADM, mais la poche défensive est du cash plutôt que des obligations",
               "rules": ["Mêmes règles qu'[ADM](strategie:adm) pour la partie actions.",
                         "En défensif : 100 % en cash (T-bills en dollars ; compte épargne au taux de dépôt de la BCE dans la vue en euros)."],
