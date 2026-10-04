@@ -105,6 +105,21 @@
       ]
     },
     {
+      "slug": "haa-ou-rotationshield",
+      "a": "haa",
+      "b": "rotationshield",
+      "titre": "HAA ou RotationShield ?",
+      "intro": [
+        "Les deux meilleurs ratios de Sharpe du site, et le même canari : les obligations américaines indexées sur l'inflation (TIP). [HAA](strategie:haa), de Keller et Keizer, passe entièrement en défensif dès que TIP faiblit, et répartit sinon sa partie offensive entre les 4 meilleurs de 8 actifs.",
+        "[RotationShield](strategie:rotationshield) ajoute un second canari, les actions émergentes, et ne détient que le S&P 500 : 100 %, 50 % ou 0 % selon le nombre de canaris négatifs, le reste en cash. Le signal du mois est publié sur [rotationshield.be](https://rotationshield.be)."
+      ],
+      "points": [
+        "RotationShield rapporte plus, porté par le S&P 500 ; HAA baisse moins, grâce à une partie offensive plus diversifiée et à un repli qui peut passer en obligations intermédiaires.",
+        "En 2022, HAA est restée dans le positif alors que RotationShield a perdu un peu : deux façons différentes de réagir à la hausse des taux.",
+        "Les deux ont été conçues récemment, avec tout l'historique sous les yeux : la période postérieure à leur publication reste courte."
+      ]
+    },
+    {
       "slug": "ivy-portfolio-avec-ou-sans-timing",
       "a": "gtaa5",
       "b": "ivy",
