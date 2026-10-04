@@ -230,8 +230,8 @@ def board_html(data, ref) -> str:
         trs.append(
             f'<tr class="{"is-bench" if s["id"] in REF_NAMES else ""}"><td><div class="s-name">'
             f'<a class="s-link" href="/strategies/{s["id"]}/">{e(s["name"])}</a></div>'
-            f'<div class="s-meta"><span class="fam">{e(s["family"])}</span></div></td>'
-            f'<td class="num">{pct(st["cagr"])}</td><td class="num">{dec(st["sharpe"])}</td>'
+            f'<div class="s-meta"><span class="fam{" fam-ref" if s["id"] in REF_NAMES else ""}">{e(s["family"])}</span></div></td>'
+            f'<td class="num">{pct(st["cagr"])}</td><td class="num is-sorted">{dec(st["sharpe"])}</td>'
             f'<td class="num neg">{pct(st["max_dd"])}</td><td class="num">{uw(st)}</td>'
             f'<td class="num">{pct(st["worst_year"], 1, True)}</td></tr>')
     return f"""
@@ -248,8 +248,9 @@ def board_html(data, ref) -> str:
         </ul>
         {fam_links()}
       </section>
+      <p class="sort-hint">Classées par <b>Sharpe</b> (rendement par unité de risque), du meilleur au moins bon.</p>
       <div class="table-scroll"><table class="board">
-        <thead><tr><th scope="col">Stratégie</th><th scope="col">CAGR</th><th scope="col">Sharpe</th>
+        <thead><tr><th scope="col">Stratégie</th><th scope="col">CAGR</th><th scope="col" aria-sort="descending">Sharpe ▼</th>
           <th scope="col">Max DD</th><th scope="col">Récup.</th><th scope="col">Pire année</th></tr></thead>
         <tbody>{''.join(trs)}</tbody></table></div>
       <p class="note-under">Période commune de {m_label(c0)} à {m_label(c1)}, frais inclus. CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet. Récup. : plus longue période passée sous un sommet précédent. Pire année : pire année civile complète ({int(c0[:4]) + (c0[5:7] != "01")}-{int(c1[:4]) - (c1[5:7] != "12")}), sans le début de {c0[:4]} ni l'année en cours.</p>"""
@@ -296,6 +297,13 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
         f'<span class="bar"><i style="width:{v * 100:.1f}%"></i></span><span class="pc num">{weight_text(v)}</span>'
         f'<span class="nm">{"T-bills (BIL)" if k == "CASH" else e(data["etf_names"].get(k, ""))}</span></div>'
         for k, v in sorted(s["next_signal"]["weights"].items(), key=lambda kv: -kv[1]))
+    if s["family"] in ("Statique", "Référence"):
+        sig_head = ("<h2>Allocation</h2><p class=\"sub\">"
+                    + ("Fixe : rééquilibrage une fois par an, fin décembre." if s["rebalance"] == "annual"
+                       else "Fixe : aucun signal à suivre.") + "</p>")
+    else:
+        sig_head = (f"<h2>Signal pour {m_long(nm)}</h2>"
+                    f"<p class=\"sub\">Calculé sur la clôture de fin {m_long(data['data_end'])}.</p>")
     extra = ""
     if s.get("variant_note"):
         extra += f'<div class="callout">{rich(s["variant_note"])}</div>'
@@ -320,7 +328,7 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
     return f"""
       {crumbs_html(sheet_crumbs(s))}
       <section class="sheet-head">
-        <div class="byline">{fam_chip(s['family'])}<span>{e(s.get('author', ''))}</span></div>
+        <div class="byline">{fam_chip(s['family'])}{f"<span>{e(s['author'])}</span>" if s.get('author') not in (None, '', '—') else ''}</div>
         <h1>{e(s['name'])}</h1>
         <p class="lede">{e(s.get('note', ''))}</p>
         <p class="cmp-cta"><a href="/comparer/?s={s['id']},{compare_default(s, data)}">Comparer avec une autre stratégie →</a></p>
@@ -335,7 +343,7 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
         {ess}
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules">{''.join(f'<li>{rich(r)}</li>' for r in rules_for(s))}</ol>{extra}</section>
       </div><div class="stack">
-        <section class="panel" style="--o:2"><h2>Signal pour {m_long(nm)}</h2><p class="sub">Calculé sur la clôture de fin {m_long(data['data_end'])}.</p><div class="alloc">{sig}</div></section>
+        <section class="panel" style="--o:2">{sig_head}<div class="alloc">{sig}</div></section>
         {history_html(s)}
         {f'<section class="panel" style="--o:9"><h2>Avec des ETF européens</h2><div class="ucits-list">{ucits}</div></section>' if ucits else ''}
         <section class="panel" style="--o:10"><h2>Toutes les mesures</h2><table class="metrics"><thead><tr><th scope="col"></th>{mhead}</tr></thead><tbody>{mt}</tbody></table></section>
@@ -740,6 +748,28 @@ def legal_html(cfg) -> str:
       </section>"""
 
 
+SHORT_NAMES = {  # noms abrégés pour les titres de page (Google coupe au-delà d'environ 60 caractères)
+    "adm_tip": "ADM variante TLT/TIP", "adm_cash": "ADM variante cash",
+    "sector_rot_trend": "Rotation sectorielle avec filtre", "spy_sma10": "S&P 500 et moyenne mobile 10 mois",
+    "gpm": "Generalized Protective Momentum", "daa": "Defensive Asset Allocation (DAA)",
+    "vaa": "Vigilant Asset Allocation (VAA)", "paa": "Protective Asset Allocation (PAA)",
+    "gtaa5": "GTAA 5 (Ivy avec timing)", "three_fund": "Portefeuille 3 fonds Bogleheads",
+}
+
+
+def sheet_title(s) -> str:
+    name = SHORT_NAMES.get(s["id"], s["name"])
+    tail = " : backtest et allocation" if s["family"] in ("Statique", "Référence") else " : backtest et signal du mois"
+    if len(name + tail + " | Labo ETF") > 65:
+        tail = " : backtest et signal" if "signal" in tail else " : backtest"
+    return f"{name}{tail} | Labo ETF"
+
+
+def pair_title(c) -> str:
+    t = f"{c['titre']} Backtest | Labo ETF"
+    return t if len(t) <= 65 else f"{c['titre']} | Labo ETF"
+
+
 def clip(t: str, n=160) -> str:
     return t if len(t) <= n else t[: n - 1].rsplit(" ", 1)[0].rstrip(" .,;:") + "…"
 
@@ -774,7 +804,9 @@ def build(root: Path = ROOT) -> list[str]:
     KNOWN_IDS.update(by_id)
     ref = by_id.get("acwi") or by_id["spy"]
     c0 = data["common_window"][0]
-    stamp = f"Données à fin {m_long(data['data_end'])} · {sum(s['id'] not in REF_NAMES for s in data['strategies'])} stratégies"
+    up = data.get("data_updated")
+    up_txt = f" · mises à jour le {int(up[8:10])} {MOIS[int(up[5:7]) - 1]}" if up else ""
+    stamp = f"Données à fin {m_label(data['data_end'])}{up_txt}"
     base_url = cfg["site_url"].rstrip("/")
     written = []
 
@@ -803,7 +835,7 @@ def build(root: Path = ROOT) -> list[str]:
         write(f"strategies/{s['id']}/index.html",
               page(head_tpl, body_tpl, path=f"strategies/{s['id']}/", nav="", og_type="article",
                    content=sheet_html(s, data, fiches, uc, ref), image=s["id"],
-                   title=f"{s['name']} : backtest, règles et signal du mois | Labo ETF", desc=desc,
+                   title=sheet_title(s), desc=desc,
                    jsonld=[{"@context": "https://schema.org", "@type": "WebPage", "name": s["name"],
                             "description": desc, "inLanguage": "fr",
                             "isPartOf": {"@type": "WebSite", "name": "Labo ETF", "url": base_url + "/"}},
@@ -812,26 +844,26 @@ def build(root: Path = ROOT) -> list[str]:
     if uc:
         write("equivalents-ucits/index.html",
               page(head_tpl, body_tpl, path="equivalents-ucits/", nav="ucits", content=ucits_html(data, uc),
-                   title="Équivalents UCITS des ETF américains (ISIN, tickers, frais) | Labo ETF",
+                   title="Équivalents UCITS des ETF US : ISIN et frais | Labo ETF",
                    desc="Pour chaque ETF américain (SPY, TLT, GLD, QQQ…), l'équivalent UCITS accessible en Europe : "
                         "ISIN, cotations, frais et niveau de correspondance.", **common))
     nm = data["strategies"][0]["next_signal"]["for_month"]
     write("signaux/index.html",
           page(head_tpl, body_tpl, path="signaux/", nav="signaux", static=True, content=signals_html(data),
-               title=f"Signaux des stratégies ETF pour {m_long(nm)} (GEM, DAA, VAA…) | Labo ETF",
+               title=f"Signaux ETF {de(m_long(nm))} (GEM, DAA, VAA…) | Labo ETF",
                desc=clip(f"Les allocations {de(m_long(nm))} de toutes les stratégies ETF du site : ce qui change, ce qui "
                          "reste en place, calculé sur la dernière clôture mensuelle."), **common))
     for slug, fam in FAMILLES.items():
         write(f"{slug}/index.html",
               page(head_tpl, body_tpl, path=f"{slug}/", nav="none", static=True,
                    content=family_html(slug, fam, data, ref),
-                   title=f"{fam['titre']} : stratégies backtestées et comparées | Labo ETF",
+                   title=f"{fam['titre']} : backtests comparés | Labo ETF",
                    desc=clip(fam["description"]),
                    jsonld=crumbs_ld([("/", "Stratégies"), (None, fam["titre"])], base_url), **common))
     # comparateur et pages « X ou Y ? »
     write("comparer/index.html",
           page(head_tpl, body_tpl, path="comparer/", nav="comparer", content=compare_index_html(data),
-               title="Comparer des stratégies ETF : courbes, baisses et années côte à côte | Labo ETF",
+               title="Comparer des stratégies ETF côte à côte | Labo ETF",
                desc="Comparez deux ou trois stratégies ETF (GEM, Permanent Portfolio, DAA…) : rendement, pire baisse, "
                     "années, en dollars ou en euros.",
                jsonld=crumbs_ld([("/", "Stratégies"), (None, "Comparer")], base_url), **common))
@@ -840,8 +872,8 @@ def build(root: Path = ROOT) -> list[str]:
         sa, sb = by_id[c["a"]], by_id[c["b"]]
         write(f"comparer/{slug}/index.html",
               page(head_tpl, body_tpl, path=f"comparer/{slug}/", nav="none", static=True,
-                   content=pair_html(c, data, by_id),
-                   title=f"{c['titre']} Backtest et comparaison | Labo ETF",
+                   content=pair_html(c, data, by_id), image=f"cmp-{slug}",
+                   title=pair_title(c),
                    desc=clip(f"{sa['name']} ou {sb['name']} : rendement, pire baisse, années et règles comparés "
                              "sur les mêmes données."),
                    jsonld=crumbs_ld([("/", "Stratégies"), ("/comparer/", "Comparer"), (None, c["titre"])], base_url),
@@ -868,7 +900,8 @@ def build(root: Path = ROOT) -> list[str]:
                    '<script>window.ESL_BASE = "/";</script>', '<script>window.ESL_BASE = "/"; window.ESL_404 = true;</script>'))
     try:
         import og_images
-        written += og_images.build(data, SITE, cfg.get("site_name") or "Labo ETF")
+        written += og_images.build(data, SITE, cfg.get("site_name") or "Labo ETF",
+                                   comparisons=[(pair_slug(c), c) for c in COMPARAISONS], short=SHORT_NAMES)
     except ImportError as err:  # matplotlib absent : pages sans image
         print(f"⚠️  Images d'aperçu non générées ({err})")
     today = dt.date.today().isoformat()

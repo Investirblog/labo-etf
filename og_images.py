@@ -3,6 +3,7 @@ og_images.py — images d'aperçu (1200 × 630) pour les réseaux sociaux.
 
   site/og/home.png        accueil, UCITS, méthode : nuage rendement / pire baisse
   site/og/<id>.png        une par stratégie : nom, chiffres clés, courbe face aux actions mondiales
+  site/og/cmp-<slug>.png  une par comparaison « X ou Y ? » : les deux courbes et leurs chiffres clés
 
 Appelé par build_site.py. Polices : assets/og-fonts (IBM Plex, licence OFL).
 """
@@ -25,7 +26,7 @@ W, H, DPI = 1200, 630, 100
 BRAND = "Labo ETF"
 
 BG, INK, INK2, INK3, RULE = "#f3f5f1", "#17201b", "#4f5a54", "#7a847e", "#d8ddd5"
-ACCENT, BENCH, NEG = "#2a78d6", "#8e9791", "#b6402e"
+ACCENT, BENCH, NEG, PUB = "#2a78d6", "#8e9791", "#b6402e", "#9a6b00"
 
 
 def _font(name, size):
@@ -72,7 +73,7 @@ def strategy_image(s: dict, ref: dict, out: Path):
     fig = _canvas()
     st = s["stats_common"]
     fig.text(60 / W, 1 - 140 / H, s["family"].upper(), fontproperties=_font("ibm-plex-mono-500", 15), color=INK3)
-    name = textwrap.fill(s["name"], 34)
+    name = textwrap.fill(_nbsp(s["name"]), 34)
     lines = name.count("\n") + 1
     size = 50 if lines == 1 else 42
     fig.text(60 / W, 1 - 160 / H, name, fontproperties=_font("ibm-plex-sans-condensed-700", size), color=INK,
@@ -140,7 +141,57 @@ def home_image(data: dict, out: Path):
     _save(fig, out)
 
 
-def build(data: dict, site: Path, brand: str = "Labo ETF") -> list[str]:
+def _nbsp(x: str) -> str:
+    """Espaces insécables devant : ? ! (pas de ponctuation rejetée en début de ligne)."""
+    return x.replace(" :", "\u00a0:").replace(" ?", "\u00a0?").replace(" !", "\u00a0!")
+
+
+def pair_image(c: dict, slug: str, by_id: dict, start: str, out: Path, short: dict | None = None):
+    """Comparaison « X ou Y ? » : titre, deux courbes (base 100, échelle log) et chiffres clés."""
+    fig = _canvas()
+    a, b = by_id[c["a"]], by_id[c["b"]]
+    short = short or {}
+    title = textwrap.fill(_nbsp(c["titre"]), 26)
+    lines = title.count("\n") + 1
+    fig.text(60 / W, 1 - 128 / H, title, fontproperties=_font("ibm-plex-sans-condensed-700", 46 if lines < 3 else 40),
+             color=INK, va="top", linespacing=1.05)
+    keys = sorted(set(a["equity"]) & set(b["equity"]))
+    keys = [k for k in keys if k >= start]          # mois détenus, base juste avant le premier
+
+    def curve(s):
+        eq = s["equity"]
+        base = eq.get(prev_month(keys[0]), 1.0)     # absent : premier mois de la stratégie
+        return [1.0] + [eq[k] / base for k in keys]
+
+    y = 1 - (330 if lines < 3 else 380) / H
+    for i, (s, col) in enumerate([(a, ACCENT), (b, PUB)]):
+        v = curve(s)
+        cagr = v[-1] ** (12 / len(keys)) - 1
+        dd, peak = 0.0, 1.0
+        for x in v:
+            peak = max(peak, x); dd = min(dd, x / peak - 1)
+        yy = y - i * 105 / H
+        fig.text(60 / W, yy, textwrap.shorten(short.get(s["id"], s["name"]), 40, placeholder="…"),
+                 fontproperties=_font("ibm-plex-sans-600", 19), color=col)
+        fig.text(60 / W, yy - 44 / H, f"{_pct(cagr)} par an   pire baisse {_pct(dd)}",
+                 fontproperties=_font("ibm-plex-mono-500", 21), color=INK2)
+    fig.text(60 / W, 36 / H, f"Backtest depuis {_mlabel(keys[0])}, frais inclus, mêmes données",
+             fontproperties=_font("ibm-plex-sans-400", 15), color=INK3)
+    ax = fig.add_axes([740 / W, 90 / H, 420 / W, 420 / H])
+    for s, col, lw in [(b, PUB, 2.6), (a, ACCENT, 3)]:
+        v = curve(s)
+        ax.plot(range(len(v)), [x * 100 for x in v], color=col, lw=lw)
+    ax.set_yscale("log")
+    ax.set_facecolor(BG)
+    for sp in ax.spines.values():
+        sp.set_visible(False)
+    ax.set_xticks([]); ax.set_yticks([]); ax.minorticks_off()
+    ax.axhline(100, color=RULE, lw=1.2, zorder=0)
+    _save(fig, out)
+
+
+def build(data: dict, site: Path, brand: str = "Labo ETF", comparisons: list | None = None,
+          short: dict | None = None) -> list[str]:
     global BRAND
     BRAND = brand
     by_id = {s["id"]: s for s in data["strategies"]}
@@ -150,4 +201,13 @@ def build(data: dict, site: Path, brand: str = "Labo ETF") -> list[str]:
     for s in data["strategies"]:
         strategy_image(s, ref, site / "og" / f"{s['id']}.png")
         written.append(f"og/{s['id']}.png")
+    start = data["common_window"][0]
+    for slug, c in (comparisons or []):
+        pair_image(c, slug, by_id, start, site / "og" / f"cmp-{slug}.png", short)
+        written.append(f"og/cmp-{slug}.png")
     return written
+
+
+def prev_month(p: str) -> str:
+    y, m = map(int, p.split("-")[:2])
+    return f"{y - (m == 1)}-{12 if m == 1 else m - 1:02d}"
