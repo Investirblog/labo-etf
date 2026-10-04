@@ -1,4 +1,4 @@
-# Rapport qualité — 2026-10-03
+# Rapport qualité — 2026-10-04
 
 - ETF traités : 45/42 · erreurs : 0 · alertes : 0
 - Fenêtre commune (tous les ETF traités disponibles) : à partir de 2008-05
@@ -180,4 +180,4 @@
 - Source : BCE (data-api.ecb.europa.eu) · couverture 1999-02 → 2026-09 (332 mois)
 
 ### ECBDEP — Taux de dépôt de la BCE (FRED ECBDFR), plancher 0 % : compte épargne en euros
-- Source : FRED ECBDFR · couverture 1999-01 → 2026-09 (333 mois)
+- Source : BCE (data-api.ecb.europa.eu) · couverture 1999-01 → 2026-09 (333 mois)
