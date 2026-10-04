@@ -160,6 +160,9 @@ def main(argv=None) -> int:
         "common_window": [str(common_start), str(common_end)],
         "cost_per_trade": a.cost,
         "data_end": str(returns.index[-1]),
+        # date du dernier téléchargement des données (affichée dans l'en-tête du site)
+        "data_updated": (json.loads((ROOT / "data" / "meta.json").read_text(encoding="utf-8"))
+                         .get("generated_at", "")[:10] or None) if (ROOT / "data" / "meta.json").exists() else None,
         "cash_cagr_common": float((1 + rf.loc[common_start:common_end].fillna(0)).prod()
                                   ** (12 / len(rf.loc[common_start:common_end])) - 1),
         "eur": ({"from": str(fx.index[0]), "cash": eur_cash_col,

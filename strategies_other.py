@@ -61,8 +61,8 @@ OTHER = [
               "variant_note": "Faber teste plusieurs durées (1 à 12 mois) ; on retient les 3 mois de la version décrite par StockCharts."}),
     Strategy(
         id="sector_rot_trend", name="Rotation sectorielle avec filtre de tendance",
-        assets=SECTORS + ["SPY"], weights=sector_rotation(trend_filter=True), lookback=10,
-        family="Secteurs", uses_cash=True,
+        assets=SECTORS + ["SPY"], weights=sector_rotation(trend_filter=True), lookback=3,
+        asset_lookback={"SPY": 10}, family="Secteurs", uses_cash=True,
         meta={"published": "2010-01", "author": "Mebane Faber (2010)",
               "note": "La même rotation, mise en cash quand le S&P 500 passe sous sa moyenne 10 mois",
               "rules": ["Si SPY est sous sa moyenne des 10 derniers mois : 100 % cash.",

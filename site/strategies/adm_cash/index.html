@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Accelerating Dual Momentum (variante cash) : backtest, règles et signal du mois | Labo ETF</title>
+<title>ADM variante cash : backtest et signal du mois | Labo ETF</title>
 <meta name="description" content="Comme ADM, mais la poche défensive est du cash plutôt que des obligations. Depuis juil. 2008 : 10,3 % par an, pire baisse -18,2 %.">
 <link rel="canonical" href="https://laboetf.eu/strategies/adm_cash/">
 <meta property="og:site_name" content="Labo ETF">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Accelerating Dual Momentum (variante cash) : backtest, règles et signal du mois | Labo ETF">
+<meta property="og:title" content="ADM variante cash : backtest et signal du mois | Labo ETF">
 <meta property="og:description" content="Comme ADM, mais la poche défensive est du cash plutôt que des obligations. Depuis juil. 2008 : 10,3 % par an, pire baisse -18,2 %.">
 <meta property="og:url" content="https://laboetf.eu/strategies/adm_cash/">
 <meta property="og:image" content="https://laboetf.eu/og/adm_cash.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Accelerating Dual Momentum (variante cash) : backtest, règles et signal du mois | Labo ETF">
+<meta property="og:image:alt" content="ADM variante cash : backtest et signal du mois | Labo ETF">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script data-goatcounter="https://etf-strategy-lab.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -447,6 +447,25 @@ table.sig-table, table.fam-table { width: 100%; border-collapse: collapse; font-
 .hero-stats span { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
 .hero-stats a:hover { background: var(--accent-soft); }
 .hero-stats a b { color: var(--accent); }
+/* accueil sur grand écran : les chiffres clés occupent la colonne de droite */
+@media (min-width: 1100px) {
+  .intro { max-width: none; grid-template-columns: minmax(0, 1fr) 290px; column-gap: 64px; }
+  .intro > * { grid-column: 1; }
+  .intro > .hero-stats { grid-column: 2; grid-row: 1 / span 6; align-self: start; grid-template-columns: 1fr; margin-top: 10px; }
+  .intro > .hero-stats > * { padding: 16px 20px; }
+  .intro > .hero-stats b { font-size: 38px; }
+}
+/* lignes de référence (actions mondiales, S&P 500) */
+.board tr.is-bench td, .fam-table tr.is-bench td { background: color-mix(in srgb, var(--bench) 18%, var(--surface)); }
+.board tr.is-bench td:first-child, .fam-table tr.is-bench td:first-child { box-shadow: inset 4px 0 0 var(--bench); }
+.board tr.is-bench .s-link, .fam-table tr.is-bench .s-link { font-weight: 700; }
+.fam.fam-ref { background: var(--ink-2); color: var(--surface); }
+/* colonne de tri */
+.board th[aria-sort] button { color: var(--accent); }
+.board td.is-sorted { background: color-mix(in srgb, var(--accent) 7%, transparent); font-weight: 600; }
+.board tr.is-bench td.is-sorted { background: color-mix(in srgb, var(--accent) 7%, color-mix(in srgb, var(--bench) 18%, var(--surface))); }
+.sort-hint { font-size: 13.5px; color: var(--ink-2); margin: 0 0 10px; }
+.sort-hint b { color: var(--accent); font-weight: 600; }
 @media (max-width: 480px) { .hero-stats > * { padding: 10px; } .hero-stats b { font-size: 26px; } .hero-stats span { font-size: 12px; } }
 @media (max-width: 640px) {
   .kofi-float { padding: 11px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
@@ -541,7 +560,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
         <a href="/equivalents-ucits/" data-nav="ucits">Équivalents UCITS</a>
         <a href="/methode/" data-nav="methode">Méthode</a>
       </nav>
-      <span class="stamp" id="stamp">Données à fin septembre 2026 · 26 stratégies</span>
+      <span class="stamp" id="stamp">Données à fin sept. 2026 · mises à jour le 3 oct.</span>
     </div>
   </header>
   <main id="app" aria-live="polite">
@@ -628,6 +647,10 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   function uwText(st) { return st.underwater_months == null ? "—" : `${st.underwater_months}${st.underwater_ongoing ? "+" : ""} mois`; }
 
   // ---------- utilitaires ----------
+  function stampText(d) {
+    const up = d.data_updated ? ` · mises à jour le ${+d.data_updated.slice(8, 10)} ${MOIS[+d.data_updated.slice(5, 7) - 1]}` : "";
+    return `Données à fin ${mLabel(d.data_end)}${up}`;
+  }
   const mIdx = s => { const [y, m] = s.split("-").map(Number); return y * 12 + m - 1; };
   const mStr = i => `${Math.floor(i / 12)}-${String(i % 12 + 1).padStart(2, "0")}`;
   const mLabel = s => { const [y, m] = s.split("-").map(Number); return `${MOIS[m - 1]} ${y}`; };
@@ -898,6 +921,13 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   function sortVal(s, key) { return key === "name" ? s.name.toLowerCase() : statsFor(s)[key]; }
   const ASC_KEYS = ["name", "vol", "underwater_months"];
 
+  function sortHint(key, dir) {
+    if (key === "name") return "Classées par ordre alphabétique.";
+    const lab = COLS.find(c => c.key === key)?.label || key;
+    const best = (dir < 0) !== ASC_KEYS.includes(key);
+    return `Classées par <b>${lab}</b>${key === "sharpe" ? " (rendement par unité de risque)" : ""}, ${best ? "du meilleur au moins bon" : "du moins bon au meilleur"}.`;
+  }
+
   function renderBoard() {
     RERENDER = renderBoard;
     const nextMonth = DATA.strategies[0].next_signal.for_month;
@@ -932,6 +962,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
         </div>
       </div>
       ${ccyNote()}
+      <p class="sort-hint">${sortHint(key, dir)} Cliquez sur un titre de colonne pour changer l'ordre.</p>
       <div class="table-scroll">
         <table class="board">
           <thead><tr>${COLS.map(c => {
@@ -942,7 +973,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
           <tbody>${list.map(s => { const st = statsFor(s);
             return `<tr tabindex="0" data-id="${s.id}" class="${isRef(s) ? "is-bench" : ""}">
               <td><div class="s-name"><a class="s-link" href="${href(s.id)}">${esc(s.name)}</a></div>
-                <div class="s-meta"><span class="fam">${esc(s.family)}</span>${state.window === "full" ? `<span class="num" style="font-size:11.5px">depuis ${mLabel(st.start)}</span>` : ""}</div></td>
+                <div class="s-meta"><span class="fam${isRef(s) ? " fam-ref" : ""}">${esc(s.family)}</span>${state.window === "full" ? `<span class="num" style="font-size:11.5px">depuis ${mLabel(st.start)}</span>` : ""}</div></td>
               <td>${sparkline(s)}</td>
               <td class="num">${pct(st.cagr, 1)}</td>
               <td class="num">${pct(st.vol, 1)}</td>
@@ -985,6 +1016,8 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       state.sort = state.sort.key === k ? { key: k, dir: -state.sort.dir } : { key: k, dir: ASC_KEYS.includes(k) ? 1 : -1 };
       renderBoard(); app.querySelector(`[data-sort="${k}"]`)?.focus();
     });
+    const si = COLS.findIndex(c => c.key === key);
+    app.querySelectorAll(".board tbody tr").forEach(tr => tr.children[si]?.classList.add("is-sorted"));
     app.querySelectorAll("tbody tr").forEach(tr => {
       const open = () => go(tr.dataset.id);
       tr.onclick = open; tr.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } };
@@ -1332,7 +1365,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     app.innerHTML = `
       ${crumbs([[href(""), "Stratégies"], ...(PATH_MODE && FAMILY_PAGES[s.family] ? [[BASE + FAMILY_PAGES[s.family][0], FAMILY_PAGES[s.family][1]]] : []), [null, s.name]])}
       <section class="sheet-head">
-        <div class="byline">${famChip(s.family)}<span>${esc(s.author || "")}</span></div>
+        <div class="byline">${famChip(s.family)}${s.author && s.author !== "—" ? `<span>${esc(s.author)}</span>` : ""}</div>
         <h1>${esc(s.name)}</h1>
         <p class="lede">${esc(s.note || "")}</p>
         <p class="cmp-cta"><a href="${cmpHref([s.id, compareDefault(s)])}">Comparer avec une autre stratégie →</a></p>
@@ -1389,8 +1422,9 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
             </div>
           </section>` : ""}
           <section class="panel" style="--o:2">
-            <h2>Signal pour ${mLabelLong(nextM)}</h2>
-            <p class="sub">Calculé sur la clôture de fin ${mLabelLong(DATA.data_end)}.</p>
+            ${s.family === "Statique" || isRef(s)
+              ? `<h2>Allocation</h2><p class="sub">${s.rebalance === "annual" ? "Fixe : rééquilibrage une fois par an, fin décembre." : "Fixe : aucun signal à suivre."}</p>`
+              : `<h2>Signal pour ${mLabelLong(nextM)}</h2><p class="sub">Calculé sur la clôture de fin ${mLabelLong(DATA.data_end)}.</p>`}
             <div class="alloc">${weights.map(([k, v]) => `
               <div class="alloc-row"><span class="tk">${k === "CASH" ? "Cash" : esc(k)}</span><span class="bar"><i style="width:${(v * 100).toFixed(1)}%"></i></span><span class="pc num">${nf(v * 100 % 1 ? 1 : 0).format(v * 100)}&nbsp;%</span>
               <span class="nm">${k === "CASH" ? "T-bills (BIL)" : esc(names[k] || "")}</span></div>`).join("")}
@@ -1521,7 +1555,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       fetch(asset("ucits.json")).then(r => r.ok ? r.json() : null).catch(() => null),
     ]).then(([f, u]) => { FICHES = f; UCITS = u; return d; });
   }).then(d => {
-    document.getElementById("stamp").textContent = `Données à fin ${mLabelLong(d.data_end)} · ${d.strategies.filter(s => !isRef(s)).length} stratégies`;
+    document.getElementById("stamp").textContent = stampText(d);
     if (window.ESL_404 || window.ESL_STATIC) return;   // 404, mentions légales : on garde le contenu de la page
     const legacyId = PATH_MODE ? location.hash.slice(1) : "";
     if (legacyId && BY_ID[legacyId]) { location.replace(href(legacyId)); return; }

@@ -10,6 +10,7 @@ Une stratégie est un objet avec :
   id, name        identifiant court et nom affiché
   assets          liste des tickers utilisés (hors cash)
   lookback        nombre de mois d'historique nécessaires avant le 1er signal
+  asset_lookback  {ticker: mois} : durée propre à certains actifs (sinon `lookback`)
   rebalance       "monthly", "quarterly" ou "annual" (fin décembre)
   weights(hist)   -> dict {ticker: poids}, somme = 1 ; "CASH" autorisé
 """
@@ -52,6 +53,7 @@ class Strategy:
     family: str = ""
     meta: dict = field(default_factory=dict)
     uses_cash: bool = False     # True si la stratégie détient ou compare au cash (CASH)
+    asset_lookback: dict = field(default_factory=dict)  # {ticker: mois} si un actif demande plus ou moins d'historique
 
     def is_rebalance_month(self, t: pd.Period) -> bool:
         return (self.rebalance == "monthly"
@@ -75,12 +77,14 @@ class Result:
 def first_decision_month(strategy: Strategy, returns: pd.DataFrame) -> pd.Period:
     """Premier mois t où la stratégie dispose de `lookback` mois pour tous ses actifs
     et où tous ses actifs ont un rendement au mois t+1."""
-    avail = returns[strategy.assets].notna().all(axis=1)
+    has = returns[strategy.assets].notna()
     if strategy.uses_cash:
-        avail &= cash_series(returns).notna()
-    L = max(strategy.lookback, 0)
-    ok = avail.rolling(L, min_periods=L).sum().eq(L) if L else pd.Series(True, index=avail.index)
-    ok &= avail.shift(-1, fill_value=False)
+        has[CASH] = cash_series(returns).notna()
+    ok = has.all(axis=1).shift(-1, fill_value=False)        # tout est disponible le mois suivant
+    for col in has.columns:
+        L = max(strategy.asset_lookback.get(col, strategy.lookback), 0)
+        if L:
+            ok &= has[col].rolling(L, min_periods=L).sum().eq(L)
     if not ok.any():
         raise ValueError(f"{strategy.id} : pas assez de données")
     return ok[ok].index[0]
