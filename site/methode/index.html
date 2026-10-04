@@ -790,10 +790,20 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     const w = Object.entries(s.next_signal.weights).sort((a, b) => b[1] - a[1]);
     if (w.length === 1) return `100 % ${w[0][0]}`;
     const equal = w.every(([, v]) => Math.abs(v - w[0][1]) < 1e-6);
-    if (equal && w.length <= 3) return w.map(([k]) => k).join(" · ");
-    if (w.length <= 2) return w.map(([k, v]) => `${nf(0).format(v * 100)} % ${k}`).join(" · ");
-    return `${w.length} lignes`;
+    if (equal && w.length <= 3) return w.map(([k]) => k === "CASH" ? "Cash" : k).sort().join(" · ");
+    const tk = k => k === "CASH" ? "Cash" : k;
+    if (w.length <= 2) return w.map(([k, v]) => `${nf(0).format(v * 100)} % ${tk(k)}`).join(" · ");
+    // plus de deux lignes : la part défensive, puis les actifs risqués (nommés s'ils sont peu nombreux)
+    const def = w.filter(([k]) => DEFENSIVE.has(k)), risk = w.filter(([k]) => !DEFENSIVE.has(k));
+    const names = risk.map(([k]) => tk(k)).sort();
+    const riskTxt = names.length <= 3 ? names.join(", ") : `${names.length} ETF`;
+    if (!def.length) return equal ? `${names.length} ETF à parts égales` : `${names.length} ETF`;
+    const share = def.reduce((a, [, v]) => a + v, 0);
+    const defName = def.length === 1 ? tk(def[0][0]) : "défensif";
+    return `${nf(0).format(share * 100)} % ${defName} + ${riskTxt}`;
   }
+  // actifs de repli des stratégies tactiques (cash, T-bills, obligations d'État courtes et moyennes)
+  const DEFENSIVE = new Set(["CASH", "BIL", "SHV", "SHY", "IEF", "AGG", "BND", "TIP"]);
 
   // ---------- graphiques ----------
   function sparkline(s) {
@@ -1014,7 +1024,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
               <td class="num" title="${st.underwater_start ? `Sous le sommet de ${mLabel(st.underwater_start)} à ${st.underwater_end ? mLabel(st.underwater_end) : "aujourd'hui"}` : ""}">${uwText(st)}</td>
               <td class="num ${cls(st.worst_year)}">${pct(st.worst_year, 1, true)}</td>
               <td class="num ${cls(st.roll10_min)}">${pct(st.roll10_min, 1, true)}</td>
-              <td class="signal">${esc(signalText(s))}</td></tr>`; }).join("")}
+              <td class="signal"${s.family === "Statique" || isRef(s) ? "" : ` title="${esc(allocText(s.next_signal.weights))}"`}>${esc(signalText(s))}</td></tr>`; }).join("")}
           </tbody>
         </table>
       </div>
