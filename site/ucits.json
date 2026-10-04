@@ -370,14 +370,15 @@
    "funds": [
     "IB01"
    ],
-   "match": "meme"
+   "match": "proche",
+   "note": "Treasuries de 0 à 1 an au lieu des T-bills de 1 à 3 mois : un peu plus sensible aux taux, comportement très proche."
   },
   "CASH": {
    "funds": [
     "IB01"
    ],
-   "match": "meme",
-   "note": "Le cash des stratégies correspond aux T-bills américains."
+   "match": "proche",
+   "note": "Le cash des stratégies correspond aux T-bills américains de 1 à 3 mois ; ce fonds détient des Treasuries de 0 à 1 an, au comportement très proche."
   },
   "TIP": {
    "funds": [

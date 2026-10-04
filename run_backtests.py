@@ -42,16 +42,30 @@ def clean(obj):
     return obj
 
 
+def decision_month(s, t: pd.Period) -> pd.Period:
+    """Dernière fin de mois, au plus tard t, où la stratégie prend une décision.
+    Une stratégie trimestrielle garde entre-temps la décision de la fin du trimestre précédent."""
+    if s.rebalance != "quarterly":
+        return t
+    while not s.is_rebalance_month(t):
+        t -= 1
+    return t
+
+
+def signal_at(s, data: pd.DataFrame, t: pd.Period) -> dict:
+    w = s.weights(data.loc[:decision_month(s, t)])
+    return {k: round(float(v), 4) for k, v in w.items() if v > 1e-6}
+
+
 def signal_history(s, returns: pd.DataFrame, rf: pd.Series, n: int = 13) -> dict:
-    """Signal calculé à chaque fin de mois, indexé par le mois où il s'applique."""
+    """Signal en vigueur chaque mois, indexé par le mois où il s'applique."""
     data = returns[s.assets].assign(CASH=rf)
     out = {}
     for t in returns.index[-n:]:
         try:
-            w = s.weights(data.loc[:t])
+            out[str(t + 1)] = signal_at(s, data, t)
         except Exception:  # historique insuffisant
             continue
-        out[str(t + 1)] = {k: round(float(v), 4) for k, v in w.items() if v > 1e-6}
     return out
 
 
@@ -124,8 +138,7 @@ def main(argv=None) -> int:
                                 for k, v in r.weights.iloc[-1].items() if abs(v) > 1e-6},
             # signal pour le mois qui commence, calculé sur la dernière clôture mensuelle
             "next_signal": {"for_month": str(returns.index[-1] + 1),
-                            "weights": {k: round(float(v), 4)
-                                        for k, v in s.weights(returns[s.assets].assign(CASH=rf)).items() if v > 1e-6}},
+                            "weights": signal_at(s, returns[s.assets].assign(CASH=rf), returns.index[-1])},
             "avg_turnover_year": float(r.turnover.sum() / (len(r.returns) / 12)),
             # signaux des 13 derniers mois (mois de détention -> poids), pour la page « Signaux du mois »
             "signal_history": signal_history(s, returns, rf),

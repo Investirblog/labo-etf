@@ -561,7 +561,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       </div><div class="stack">
         <section class="panel"><h2>Rendement par année</h2>
           <table class="metrics cmp-years"><thead><tr><th scope="col"></th><th scope="col"><i class="sw" style="background:var(--accent)"></i></th><th scope="col"><i class="sw" style="background:var(--pub)"></i></th></tr></thead><tbody><tr><td>2026*</td><td class="num">+6,3 %</td><td class="num">+5,5 %</td></tr><tr><td>2025</td><td class="num">+20,0 %</td><td class="num">+20,0 %</td></tr><tr><td>2024</td><td class="num">+12,4 %</td><td class="num">+12,4 %</td></tr><tr><td>2023</td><td class="num">+12,6 %</td><td class="num">+11,4 %</td></tr><tr><td>2022</td><td class="num neg">-24,2 %</td><td class="num neg">-18,2 %</td></tr><tr><td>2021</td><td class="num">+19,9 %</td><td class="num">+19,9 %</td></tr><tr><td>2020</td><td class="num">+28,1 %</td><td class="num">+19,2 %</td></tr><tr><td>2019</td><td class="num">+12,6 %</td><td class="num">+11,6 %</td></tr><tr><td>2018</td><td class="num">+4,1 %</td><td class="num neg">-1,6 %</td></tr><tr><td>2017</td><td class="num">+23,2 %</td><td class="num">+23,2 %</td></tr><tr><td>2016</td><td class="num">+0,5 %</td><td class="num neg">-2,4 %</td></tr><tr><td>2015</td><td class="num">+0,8 %</td><td class="num neg">-0,8 %</td></tr><tr><td>2014</td><td class="num">+14,0 %</td><td class="num">+14,0 %</td></tr><tr><td>2013</td><td class="num">+24,8 %</td><td class="num">+24,8 %</td></tr><tr><td>2012</td><td class="num">+14,0 %</td><td class="num">+15,9 %</td></tr><tr><td>2011</td><td class="num">+21,9 %</td><td class="num neg">-1,4 %</td></tr><tr><td>2010</td><td class="num">+7,2 %</td><td class="num">+4,9 %</td></tr><tr><td>2009</td><td class="num">+23,2 %</td><td class="num">+43,0 %</td></tr><tr><td>2008*</td><td class="num">+32,5 %</td><td class="num">+0,5 %</td></tr></tbody></table>
-          <p class="sub" style="margin:0">* année incomplète.</p></section>
+          <p class="sub" style="margin:0">* année incomplète, non retenue pour la « pire année ».</p></section>
       </div></div>
       <section class="doc"><h2>Autres comparaisons</h2><p><a href="/comparer/gem-ou-adm/">GEM ou Accelerating Dual Momentum ?</a> · <a href="/comparer/permanent-portfolio-ou-all-weather/">Permanent Portfolio ou All Weather ?</a> · <a href="/comparer/permanent-portfolio-ou-golden-butterfly/">Permanent Portfolio ou Golden Butterfly ?</a> · <a href="/comparer/60-40-ou-all-weather/">60/40 ou All Weather ?</a></p></section>
       <p class="note-under">Backtests sur des ETF américains, dividendes réinvestis, avant impôts. Les performances passées ne préjugent pas des performances futures.</p></main>
@@ -630,8 +630,11 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   const mLabel = s => { const [y, m] = s.split("-").map(Number); return `${MOIS[m - 1]} ${y}`; };
   const mLabelLong = s => { const [y, m] = s.split("-").map(Number); return `${MOIS_LONG[m - 1]} ${y}`; };
   const nf = (d) => new Intl.NumberFormat("fr-BE", { minimumFractionDigits: d, maximumFractionDigits: d });
-  const pct = (v, d = 1, sign = false) => v == null || isNaN(v) ? "—" :
-    (sign && v > 0 ? "+" : "") + nf(d).format(v * 100) + "\u00a0%";
+  const pct = (v, d = 1, sign = false) => {
+    if (v == null || isNaN(v)) return "—";
+    const x = Math.abs(v * 100) < 0.5 * 10 ** -d ? 0 : v * 100;   // évite « -0,0 % »
+    return (sign && x > 0 ? "+" : "") + nf(d).format(x) + "\u00a0%";
+  };
   const dec = (v, d = 2) => v == null || isNaN(v) ? "—" : nf(d).format(v);
   const cls = v => v == null ? "" : v < 0 ? "neg" : "";
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -720,7 +723,8 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   function allocText(w) {
     const g = new Map();
     Object.entries(w).forEach(([k, v]) => { const r = Math.round(v * 1000) / 1000; if (!g.has(r)) g.set(r, []); g.get(r).push(k === "CASH" ? "Cash" : k); });
-    return [...g.entries()].sort((a, b) => b[0] - a[0]).map(([v, ks]) => `${wtxt(v)} ${ks.length > 1 ? "chacun : " + ks.join(", ") : ks[0]}`).join(" · ");
+    const byName = (a, b) => (a === "Cash") - (b === "Cash") || a.localeCompare(b);
+    return [...g.entries()].sort((a, b) => b[0] - a[0]).map(([v, ks]) => { ks.sort(byName); return `${wtxt(v)} ${ks.length > 1 ? "chacun : " + ks.join(", ") : ks[0]}`; }).join(" · ");
   }
   const sameW = (a, b) => [...new Set([...Object.keys(a), ...Object.keys(b)])].every(k => Math.abs((a[k] || 0) - (b[k] || 0)) < 0.005);
   function signalText(s) {
@@ -909,7 +913,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
         <ul class="method">
           <li>Période commune <b>${mLabel(c0)} → ${mLabel(c1)}</b></li>
           <li>Frais <b>${nf(2).format(DATA.cost_per_trade * 100)} %</b> par transaction</li>
-          <li>Rééquilibrage <b>fin de mois</b></li>
+          <li>Signaux <b>fin de mois</b> (portefeuilles fixes : rééquilibrage annuel)</li>
           <li>Devise <b>${EUR() ? "EUR" : "USD"}</b></li>
         </ul>
         ${famLinks()}
@@ -948,7 +952,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
           </tbody>
         </table>
       </div>
-      <p class="note-under">CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet, en fin de mois. Récup. : plus longue période passée sous un sommet précédent, c'est-à-dire le plus long délai pour retrouver son argent (« + » : pas encore récupéré). Pire 10 ans : le plus mauvais rendement annualisé sur toutes les périodes de 10 ans glissantes.${state.window === "full" ? " En historique complet, chaque stratégie a sa propre date de départ : les chiffres ne se comparent pas directement." : ""}</p>
+      <p class="note-under">CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet, en fin de mois. Récup. : plus longue période passée sous un sommet précédent, c'est-à-dire le plus long délai pour retrouver son argent (« + » : pas encore récupéré). Pire année : pire année civile complète (les années commencées ou non terminées ne comptent pas). Pire 10 ans : le plus mauvais rendement annualisé sur toutes les périodes de 10 ans glissantes.${state.window === "full" ? " En historique complet, chaque stratégie a sa propre date de départ : les chiffres ne se comparent pas directement." : ""}</p>
       <section class="scatter-wrap" aria-labelledby="sc-title">
         <h2 id="sc-title">Ce que chaque stratégie a rapporté, et ce qu'elle a fait traverser</h2>
         <p class="sub">Chaque point est une stratégie, de ${mLabel(c0)} à ${mLabel(c1)} : son rendement annuel en hauteur, sa pire baisse en largeur. La ligne relie le cash à la référence choisie : elle représente, de façon approximative, tous les mélanges actions + cash. Un point au-dessus de la ligne a obtenu plus de rendement pour une même pire baisse.</p>
@@ -1015,8 +1019,8 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     const better = strats.filter(s => src(s).stats_common.cagr > rs.cagr).length;
     const sharper = strats.filter(s => src(s).stats_common.sharpe > rs.sharpe).length;
     const shallower = strats.filter(s => src(s).stats_common.max_dd > rs.max_dd).length;
-    const n = strats.length, name = ref.id === "acwi" ? "les actions mondiales" : "le S&amp;P 500";
-    return `Depuis ${mLabel(DATA.common_window[0])}, <b>${better} stratégie${better > 1 ? "s" : ""} sur ${n}</b> ${better > 1 ? "ont" : "a"} rapporté plus que ${name} (${pct(rs.cagr, 1)} par an). Mais <b>${shallower === n ? `toutes les ${n}` : shallower}</b> ${shallower > 1 ? "ont" : "a"} subi une pire baisse moins profonde que ses ${pct(rs.max_dd, 0)}, et <b>${sharper === n ? `toutes` : sharper}</b> ${sharper > 1 ? "ont" : "a"} mieux rémunéré chaque unité de risque. La vraie question n'est pas seulement combien une stratégie rapporte, mais ce qu'elle fait traverser pour y arriver.`;
+    const n = strats.length, name = ref.id === "acwi" ? "les actions mondiales" : "le S&amp;P 500", poss = ref.id === "acwi" ? "leurs" : "ses";
+    return `Depuis ${mLabel(DATA.common_window[0])}, <b>${better} stratégie${better > 1 ? "s" : ""} sur ${n}</b> ${better > 1 ? "ont" : "a"} rapporté plus que ${name} (${pct(rs.cagr, 1)} par an). Mais <b>${shallower === n ? `toutes les ${n}` : shallower}</b> ${shallower > 1 ? "ont" : "a"} subi une pire baisse moins profonde que ${poss} ${pct(rs.max_dd, 0)}, et <b>${sharper === n ? `toutes` : sharper}</b> ${sharper > 1 ? "ont" : "a"} mieux rémunéré chaque unité de risque. La vraie question n'est pas seulement combien une stratégie rapporte, mais ce qu'elle fait traverser pour y arriver.`;
   }
 
   function renderScatter(list) {
@@ -1419,8 +1423,8 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
                 ["Creux du drawdown", x => mLabel(x.max_dd_trough)],
                 ["Récupéré en", x => x.max_dd_recovery ? mLabel(x.max_dd_recovery) : "pas encore"],
                 ["Ulcer index", x => pct(x.ulcer, 1)],
-                ["Meilleure année", x => pct(x.best_year, 1, true)],
-                ["Pire année", x => pct(x.worst_year, 1, true)],
+                ["Meilleure année civile complète", x => pct(x.best_year, 1, true)],
+                ["Pire année civile complète", x => pct(x.worst_year, 1, true)],
                 ["Mois positifs", x => pct(x.pct_pos_months, 0)],
                 ["Pire 5 ans (annualisé)", x => pct(x.roll5_min, 1, true)],
                 ["Pire 10 ans (annualisé)", x => pct(x.roll10_min, 1, true)],

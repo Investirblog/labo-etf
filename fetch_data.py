@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-fetch_data.py — ETF Strategy Lab : pipeline de données.
+fetch_data.py — Labo ETF : pipeline de données.
 
 Source principale : yfinance (cours ajustés des dividendes et splits = rendement
 total). Contrôle : classeurs iShares téléchargés à la main (--audit).

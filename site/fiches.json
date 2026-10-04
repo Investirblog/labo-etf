@@ -18,7 +18,7 @@
       "Sur la période testée, le marché américain a été l'un des meilleurs du monde."
     ],
     "faiblesses": [
-      "Des baisses très profondes : -42 % de fin de mois en 2008-2009, plus de -50 % en 2000-2002.",
+      "Des baisses très profondes, en fin de mois : -45 % en 2000-2002 et -51 % en 2007-2009 (-42 % depuis juillet 2008, début de la période commune).",
       "Des périodes longues sans gain : entre 2000 et 2009, dix ans de rendement négatif."
     ],
     "a_savoir": "Toute comparaison face au S&P 500 depuis 2008 est flatteuse pour lui : c'est le marché qui a le mieux réussi a posteriori. Il reste la bonne référence pour les stratégies purement américaines (rotation sectorielle, timing du S&P 500, 90/10 de Buffett)."
@@ -43,7 +43,7 @@
     ],
     "faiblesses": [
       "Un quart en liquidités et un quart en or freinent le rendement pendant les longues hausses d'actions.",
-      "En 2022, actions et obligations longues ont baissé ensemble : -13,5 %, et près de deux ans pour revenir au sommet."
+      "En 2022, actions et obligations longues ont baissé ensemble : -13,5 %, et plus de deux ans pour revenir au sommet (mai 2024)."
     ],
     "a_savoir": "Le pire moment de cette stratégie n'est pas 2008 mais 2022 : l'inflation a frappé en même temps les actions et les obligations, un cas que les quatre quarts couvrent mal."
   },
@@ -67,7 +67,7 @@
     ],
     "faiblesses": [
       "Très sensible à la hausse des taux : -18,8 % en 2022, sa pire année.",
-      "Il a fallu près de trois ans, jusqu'en 2025, pour retrouver le sommet d'avant 2022."
+      "Il a fallu près de trois ans et demi, jusqu'en juin 2025, pour retrouver le sommet d'avant 2022."
     ],
     "a_savoir": "Ce n'est pas le fonds All Weather de Bridgewater : ce dernier utilise du levier sur les obligations et une pondération ajustée en permanence. Cette version simplifiée n'en a ni l'un ni l'autre."
   },
@@ -90,8 +90,8 @@
       "Sert de point de comparaison direct pour la version avec timing ([GTAA 5](strategie:gtaa5))."
     ],
     "faiblesses": [
-      "Les matières premières ont perdu de l'argent sur la période (GSG : environ -3,7 % par an depuis 2008).",
-      "Presque aussi exposé aux krachs que les actions : -41 % en 2008-2009."
+      "Les matières premières ont perdu de l'argent sur la période (GSG : environ -4 % par an depuis 2008).",
+      "Presque aussi exposé aux krachs que les actions : -44 % en 2008-2009."
     ],
     "a_savoir": "Comparez avec la fiche [GTAA 5](strategie:gtaa5) : les mêmes cinq actifs, avec une seule règle de tendance en plus, divisent le pire drawdown par quatre."
   },
@@ -102,13 +102,13 @@
       "La moitié des obligations est protégée contre l'inflation."
     ],
     "faiblesses": [
-      "L'immobilier coté a chuté aussi fort que les actions en 2008 : -35 % au pire.",
+      "L'immobilier coté a chuté encore plus fort que les actions en 2008-2009 (VNQ : -60 %) : le portefeuille perd -35 % au pire.",
       "Rendement en retrait du 60/40 sur la période, pour un risque plus élevé."
     ],
     "a_savoir": "Swensen insistait autant sur les frais bas et le rééquilibrage discipliné que sur l'allocation elle-même."
   },
   "buffett": {
-    "idee": "En 2013, Warren Buffett écrit dans sa lettre aux actionnaires qu'il a demandé que l'héritage de son épouse soit placé à 90 % dans un fonds S&P 500 très bon marché et à 10 % en obligations d'État courtes.",
+    "idee": "Dans sa lettre aux actionnaires sur l'année 2013, publiée en mars 2014, Warren Buffett écrit qu'il a demandé que l'héritage de son épouse soit placé à 90 % dans un fonds S&P 500 très bon marché et à 10 % en obligations d'État courtes.",
     "forces": [
       "Presque tout le rendement du S&P 500 avec un peu moins de volatilité.",
       "La simplicité même, défendue par l'investisseur le plus célèbre du monde."
@@ -127,7 +127,7 @@
     ],
     "faiblesses": [
       "Réagit lentement : 12 mois de recul, donc des sorties et des retours tardifs (2015-2016, 2018, 2020).",
-      "Le refuge obligataire a lui-même chuté en 2022 : -17,1 % sur l'année."
+      "Le refuge obligataire (AGG) a lui-même chuté en 2022 (-13 %) : la stratégie perd -17,1 % sur l'année."
     ],
     "a_savoir": "Publiée fin 2014, la stratégie a fait moins bien que le S&P 500 depuis sa publication. Le graphique ombré permet de le constater."
   },
@@ -139,7 +139,7 @@
     ],
     "faiblesses": [
       "100 % sur un seul actif : volatilité aussi forte que les actions.",
-      "En 2022, le refuge (TLT) a plongé : -31,1 % sur l'année, un drawdown de -35 % récupéré seulement en 2025."
+      "En 2022, le refuge (TLT) a plongé de 31 % : la stratégie perd -31,1 % sur l'année, et son drawdown de -35 % n'est récupéré qu'en août 2025."
     ],
     "a_savoir": "Comparez avec la [variante TLT/TIP](strategie:adm_tip) : une seule règle ajoutée change complètement 2022. Cette sensibilité à un détail est le signe typique d'un risque de sur-optimisation."
   },
@@ -158,7 +158,7 @@
   "gtaa5": {
     "idee": "Les cinq classes d'actifs de l'[Ivy Portfolio](strategie:ivy), avec une règle unique : chaque classe n'est détenue que si elle est au-dessus de sa moyenne des 10 derniers mois, sinon sa part passe en cash.",
     "forces": [
-      "Le plus faible drawdown de tous les portefeuilles testés : environ -11 %.",
+      "L'un des plus faibles drawdowns du site : environ -11 %, avec une seule règle.",
       "Une seule règle, facile à comprendre et à appliquer."
     ],
     "faiblesses": [
@@ -246,7 +246,7 @@
       "Un rendement solide sur la période, un peu en dessous du S&P 500."
     ],
     "faiblesses": [
-      "Toujours 100 % en actions : les krachs passent quasiment intégralement (-34 % en 2008-2009).",
+      "Toujours 100 % en actions : les krachs passent quasiment intégralement (-39 % en 2008-2009).",
       "Concentration sur 3 secteurs et rotation mensuelle élevée."
     ],
     "a_savoir": "Faber a testé plusieurs durées de momentum (de 1 à 12 mois) ; cette version sur 3 mois est celle que décrit StockCharts. Pour choisir les secteurs selon le régime économique plutôt que selon le momentum, voir [MacroETF](https://macroetf.com)."
@@ -254,7 +254,7 @@
   "sector_rot_trend": {
     "idee": "La même [rotation sectorielle](strategie:sector_rot), mais tout passe en cash quand le S&P 500 est sous sa moyenne des 10 derniers mois.",
     "forces": [
-      "Le filtre réduit de près de 40 % le pire drawdown (-21 % au lieu de -34 %).",
+      "Le filtre réduit presque de moitié le pire drawdown (-21 % au lieu de -39 %).",
       "Traverse 2008 quasiment à l'équilibre au second semestre."
     ],
     "faiblesses": [
@@ -333,6 +333,6 @@
       "Moins de rendement que les versions avec obligations : le cash ne profite pas des krachs, alors que les obligations longues ont fortement monté en 2008.",
       "Le même risque de concentration qu'ADM : 100 % sur un seul ETF quand les actions sont retenues."
     ],
-    "a_savoir": "L'écart avec la [variante TLT/TIP](strategie:adm_tip) vient presque entièrement de la période 2008-2014, quand les taux baissaient. Depuis 2021, la version cash fait mieux. Comparez les deux dans la page dédiée."
+    "a_savoir": "L'écart avec la [variante TLT/TIP](strategie:adm_tip) vient surtout de la période 2008-2014, quand les taux baissaient (environ les trois quarts), et de 2015-2020 pour le reste. Depuis 2021, la version cash fait mieux. Comparez les deux dans la page dédiée."
   }
 }
