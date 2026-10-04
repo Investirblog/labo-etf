@@ -754,6 +754,7 @@ SHORT_NAMES = {  # noms abrégés pour les titres de page (Google coupe au-delà
     "gpm": "Generalized Protective Momentum", "daa": "Defensive Asset Allocation (DAA)",
     "vaa": "Vigilant Asset Allocation (VAA)", "paa": "Protective Asset Allocation (PAA)",
     "gtaa5": "GTAA 5 (Ivy avec timing)", "three_fund": "Portefeuille 3 fonds Bogleheads",
+    "rotationshield": "RotationShield",
 }
 
 

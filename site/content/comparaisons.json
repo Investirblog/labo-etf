@@ -90,6 +90,21 @@
       ]
     },
     {
+      "slug": "daa-ou-rotationshield",
+      "a": "daa",
+      "b": "rotationshield",
+      "titre": "DAA ou RotationShield ?",
+      "intro": [
+        "Les deux stratégies utilisent deux « canaris » pour décider de la part du portefeuille à mettre à l'abri. Le [DAA](strategie:daa) de Keller et Keuning répartit la partie offensive entre les 6 meilleurs de 12 actifs et se replie sur des obligations.",
+        "[RotationShield](strategie:rotationshield) n'investit que dans le S&P 500, se replie en cash et remplace le canari obligataire BND par TIP. Le signal du mois est publié sur [rotationshield.be](https://rotationshield.be)."
+      ],
+      "points": [
+        "La plus grande part de l'écart vient du S&P 500 seul : sur cette période, il a battu presque toutes les autres classes d'actifs.",
+        "Le repli en cash coûte un peu de rendement par rapport aux obligations, mais limite les baisses quand actions et obligations chutent ensemble, comme en 2022.",
+        "Le DAA reste plus diversifié : il ne dépend pas d'un seul marché pour sa partie offensive."
+      ]
+    },
+    {
       "slug": "ivy-portfolio-avec-ou-sans-timing",
       "a": "gtaa5",
       "b": "ivy",
