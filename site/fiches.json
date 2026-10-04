@@ -212,7 +212,7 @@
     "faiblesses": [
       "Tout repose sur le S&P 500, le meilleur marché de la période : c'est lui, plus que les canaris, qui explique l'écart avec le DAA original.",
       "Change d'exposition environ cinq fois par an : les frais et les taxes sur transactions comptent.",
-      "Depuis son début en 2006, le backtest perd -24 % en 2007-2009 : la période commune, qui commence en juillet 2008, ne montre pas le début de cette baisse."
+      "Depuis son début en 2006, le backtest perd -24 % en 2007-2009 : la période commune, qui commence en juillet 2008, ne montre pas le début de cette baisse. Sur [rotationshield.be](https://rotationshield.be), le backtest part de mars 2008 : 11,2 % par an et -16 % au pire, avec la TOB belge."
     ],
     "a_savoir": "Conçue en 2026, avec tout l'historique sous les yeux. Le lissage du score sur les 5 dernières séances du mois ajoute à lui seul environ un point et demi de rendement par an dans ce backtest : un détail d'exécution qui pèse lourd, donc à prendre avec prudence."
   },
