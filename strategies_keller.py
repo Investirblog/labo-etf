@@ -222,7 +222,7 @@ KELLER = [
     Strategy(
         id="daa", name="Defensive Asset Allocation (DAA-G12)",
         assets=uniq(DAA_RISKY, DAA_CASH, DAA_CANARY), weights=daa, lookback=12, family="Keller",
-        meta={"published": "2018-07", "author": "Wouter Keller & Jan Willem Keuning (2018)",
+        meta={"published": "2018-07", "author": "Wouter Keller & Jan Willem Keuning (2018)", "signal_only": ["BND"],
               "note": "Deux « canaris » (émergents et obligations) décident de la part défensive",
               "rules": ["Fin de mois : momentum 13612W de chaque actif.",
                         "Canaris : VWO et BND. Chaque canari négatif fait passer 50 % du portefeuille en défensif.",
@@ -232,7 +232,7 @@ KELLER = [
     Strategy(
         id="rotationshield", name="RotationShield (DAA sur le S&P 500)",
         assets=["SPY"] + RS_CANARY, weights=rotationshield, lookback=12, family="Keller", uses_cash=True,
-        meta={"published": "2026-09", "author": "Nathanaël Dumortier (2026), d'après Keller & Keuning",
+        meta={"published": "2026-09", "author": "Nathanaël Dumortier (2026), d'après Keller & Keuning", "signal_only": RS_CANARY,
               "note": "Les deux canaris de DAA pilotent un seul actif : le S&P 500, ou du cash",
               "rules": ["Chaque jour : score 13612W (12×r1 + 4×r3 + 2×r6 + r12) des canaris VWO (émergents) et TIP (obligations indexées sur l'inflation).",
                         "Fin de mois : moyenne du score sur les 5 dernières séances ; seul son signe compte.",
@@ -253,7 +253,7 @@ KELLER = [
     Strategy(
         id="haa", name="Hybrid Asset Allocation (HAA)",
         assets=uniq(HAA_OFF, HAA_DEF, HAA_CANARY), weights=haa, lookback=12, family="Keller",
-        meta={"published": "2023-02", "author": "Wouter Keller & JW Keizer (2023)",
+        meta={"published": "2023-02", "author": "Wouter Keller & JW Keizer (2023)", "signal_only": [HAA_CANARY],
               "note": "Un seul canari, les obligations indexées sur l'inflation (TIP)",
               "rules": ["Fin de mois : momentum = moyenne des rendements sur 1, 3, 6 et 12 mois.",
                         "Si TIP a un momentum négatif : 100 % dans le meilleur de IEF et BIL.",
@@ -262,7 +262,7 @@ KELLER = [
     Strategy(
         id="baa", name="Bold Asset Allocation (BAA-G12)",
         assets=uniq(BAA_CANARY, BAA_OFF, BAA_DEF), weights=baa, lookback=13, family="Keller",
-        meta={"published": "2022-10", "author": "Wouter Keller (2022)",
+        meta={"published": "2022-10", "author": "Wouter Keller (2022)", "signal_only": ["EFA"],
               "note": "Offensif seulement si les 4 canaris sont au vert, ce qui arrive environ 40 % du temps",
               "rules": ["Fin de mois : momentum 13612W des canaris SPY, EFA, EEM et AGG.",
                         "Tous positifs : les 6 meilleurs des 12 actifs offensifs, classés sur valeur / moyenne 13 mois, à parts égales.",

@@ -277,6 +277,9 @@ table.ucits { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .ucits-list { display: grid; gap: 12px; }
 .ucits-item { display: grid; gap: 4px; font-size: 13.5px; padding-bottom: 10px; border-bottom: 1px solid var(--rule-soft); }
 .ucits-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.ucits-h { font-family: var(--f-display); font-weight: 600; font-size: 14.5px; margin: 6px 0 -4px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.ucits-list.is-signal .ucits-item { color: var(--ink-2); }
+.ucits-list.is-signal .us { opacity: .8; }
 .ucits-item .top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
 /* Nuage rendement / pire baisse */
@@ -583,7 +586,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       </div><div class="stack">
         <section class="panel" style="--o:2"><h2>Signal pour octobre 2026</h2><p class="sub">Calculé sur la clôture de fin septembre 2026.</p><div class="alloc"><div class="alloc-row"><span class="tk">SPY</span><span class="bar"><i style="width:100.0%"></i></span><span class="pc num">100 %</span><span class="nm">SPDR S&amp;P 500</span></div></div></section>
         <section class="panel" style="--o:4"><h2>Historique des signaux</h2><p class="sub">4 changements sur les 12 derniers mois. En gras : le mois où l'allocation a changé.</p><table class="hist"><thead><tr><th scope="col">Mois</th><th scope="col">Allocation</th></tr></thead><tbody><tr class=""><td>oct. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>sept. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>août 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>juil. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class="chg"><td>juin 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class="chg"><td>mai 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class="chg"><td>avr. 2026</td><td class="alloc-txt">100 % TLT</td></tr><tr class=""><td>mars 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class=""><td>févr. 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class="chg"><td>janv. 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class=""><td>déc. 2025</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>nov. 2025</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>oct. 2025</td><td class="alloc-txt">100 % SPY</td></tr></tbody></table></section>
-        <section class="panel" style="--o:9"><h2>Avec des ETF européens</h2><div class="ucits-list"><div class="ucits-item"><div class="top"><span class="us num">SPY</span><span aria-hidden="true">→</span><b>CSPX</b><span class="match meme">même indice</span></div><div class="fmeta">iShares Core S&amp;P 500 UCITS ETF USD (Acc) · <span class="isin">IE00B5BMR087</span> · frais 0,07 %</div></div><div class="ucits-item"><div class="top"><span class="us num">SCZ</span><span aria-hidden="true">→</span><b>WSML</b><span class="match proche">proche</span></div><div class="fmeta">iShares MSCI World Small Cap UCITS ETF · <span class="isin">IE00BF4RFH31</span> · frais 0,35 %</div><div class="unote">Pas d&#x27;équivalent UCITS pour les petites capitalisations hors USA : cet indice inclut aussi les américaines, majoritaires.</div></div><div class="ucits-item"><div class="top"><span class="us num">TLT</span><span aria-hidden="true">→</span><b>DTLA</b><span class="match meme">même indice</span></div><div class="fmeta">iShares USD Treasury Bond 20+yr UCITS ETF USD (Acc) · <span class="isin">IE00BFM6TC58</span> · frais 0,07 %</div></div></div></section>
+        <section class="panel" style="--o:9"><h2>Avec des ETF européens</h2><p class="sub">Les ETF américains ne sont pas accessibles aux particuliers européens. Voici les équivalents UCITS des ETF utilisés.</p><div class="ucits-list"><div class="ucits-item"><div class="top"><span class="us num">SPY</span><span aria-hidden="true">→</span><b>CSPX</b><span class="match meme">même indice</span></div><div class="fmeta">iShares Core S&amp;P 500 UCITS ETF USD (Acc) · <span class="isin">IE00B5BMR087</span> · frais 0,07 %</div></div><div class="ucits-item"><div class="top"><span class="us num">SCZ</span><span aria-hidden="true">→</span><b>WSML</b><span class="match proche">proche</span></div><div class="fmeta">iShares MSCI World Small Cap UCITS ETF · <span class="isin">IE00BF4RFH31</span> · frais 0,35 %</div><div class="unote">Pas d&#x27;équivalent UCITS pour les petites capitalisations hors USA : cet indice inclut aussi les américaines, majoritaires.</div></div><div class="ucits-item"><div class="top"><span class="us num">TLT</span><span aria-hidden="true">→</span><b>DTLA</b><span class="match meme">même indice</span></div><div class="fmeta">iShares USD Treasury Bond 20+yr UCITS ETF USD (Acc) · <span class="isin">IE00BFM6TC58</span> · frais 0,07 %</div></div></div></section>
         <section class="panel" style="--o:10"><h2>Toutes les mesures</h2><table class="metrics"><thead><tr><th scope="col"></th><th scope="col">Depuis juil. 2008</th></tr></thead><tbody><tr><td>CAGR</td><td class="num">12,4 %</td></tr><tr><td>Volatilité</td><td class="num">15,0 %</td></tr><tr><td>Sharpe</td><td class="num">0,77</td></tr><tr><td>Max drawdown</td><td class="num">-34,9 %</td></tr><tr><td>Plus longue période sous l'eau</td><td class="num">43 mois</td></tr><tr><td>Meilleure année civile complète</td><td class="num">+28,1 %</td></tr><tr><td>Pire année civile complète</td><td class="num">-31,1 %</td></tr><tr><td>Pire 5 ans (annualisé)</td><td class="num">+3,2 %</td></tr><tr><td>Pire 10 ans (annualisé)</td><td class="num">+6,4 %</td></tr></tbody></table></section>
         <section class="panel" style="--o:11"><h2>Même famille</h2><p class="sub">Rendement annuel et pire baisse sur la période commune.</p><ul class="kin"><li><a href="/strategies/gem/">Global Equities Momentum (GEM)</a><span class="num">8,1 % /an · -21,6 %</span></li><li><a href="/strategies/adm_tip/">Accelerating Dual Momentum (variante TLT/TIP)</a><span class="num">13,1 % /an · -25,8 %</span></li><li><a href="/strategies/adm_cash/">Accelerating Dual Momentum (variante cash)</a><span class="num">10,3 % /an · -18,2 %</span></li><li><a href="/strategies/cdm/">Composite Dual Momentum</a><span class="num">5,3 % /an · -14,3 %</span></li><li><a href="/strategies/paired_switching/">Paired Switching</a><span class="num">8,0 % /an · -28,4 %</span></li></ul><a href="/momentum/">Toute la famille « Stratégies momentum »</a></section>
       </div></div></main>
@@ -1171,6 +1174,20 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
   }
+  // Liste « A, B et C »
+  function frList(xs) { return xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " et " + xs[xs.length - 1]; }
+  // Équivalents UCITS : d'abord les ETF achetés, puis ceux qui ne servent qu'au signal (canaris, filtres)
+  function ucitsBlock(s) {
+    const sig = s.signal_only || [];
+    const held = [...s.assets, ...(s.uses_cash || Object.keys(s.next_signal.weights).includes("CASH") ? ["CASH"] : [])]
+      .filter((a, k, arr) => arr.indexOf(a) === k && !sig.includes(a));
+    const one = sig.length === 1;
+    return `<p class="sub">Les ETF américains ne sont pas accessibles aux particuliers européens. Voici les équivalents UCITS des ETF ${sig.length ? "que la stratégie achète" : "utilisés"}.</p>
+            <div class="ucits-list">${held.map(a => ucitsItem(a)).join("")}</div>
+            ${sig.length ? `<h3 class="ucits-h">${one ? "Indicateur" : "Indicateurs"} : ne pas acheter</h3>
+            <p class="sub">${esc(frList(sig))} ${one ? "sert" : "servent"} seulement à calculer le signal : la stratégie ne ${one ? "l'achète" : "les achète"} jamais. ${one ? "Son cours est public" : "Leurs cours sont publics"} : on peut suivre directement l'ETF américain, ou son équivalent UCITS.</p>
+            <div class="ucits-list is-signal">${sig.map(a => ucitsItem(a)).join("")}</div>` : ""}`;
+  }
   function ucitsItem(t) {
     const m = UCITS.map[t]; if (!m) return "";
     const f = m.funds.map(k => UCITS._funds[k]);
@@ -1450,9 +1467,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
           </section>
           ${UCITS ? `<section class="panel" style="--o:9">
             <h2>Avec des ETF européens</h2>
-            <p class="sub">Les ETF américains ne sont pas accessibles aux particuliers européens. Voici leurs équivalents UCITS.</p>
-            <div class="ucits-list">${[...s.assets, ...(s.uses_cash || Object.keys(s.next_signal.weights).includes("CASH") ? ["CASH"] : [])]
-              .filter((a, k, arr) => arr.indexOf(a) === k).map(a => ucitsItem(a)).join("")}</div>
+            ${ucitsBlock(s)}
             <p class="sub" style="margin:0">Les résultats du site sont calculés avec les ETF américains. Un portefeuille UCITS donnera des résultats proches mais pas identiques. <a href="${href("ucits")}">Table complète</a></p>
           </section>` : ""}
           <section class="panel" style="--o:10">

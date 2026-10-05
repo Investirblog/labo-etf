@@ -97,6 +97,11 @@ def main(argv=None) -> int:
     strategies = [s for s in strategies if not missing[s.id]]
 
     full = {s.id: engine.run(s, returns, cost=a.cost) for s in strategies}
+    for s in strategies:  # un ETF « signal seulement » ne doit jamais être détenu
+        w = full[s.id].weights
+        held = [x for x in s.meta.get("signal_only", []) if x in w and (w[x].abs() > 1e-9).any()]
+        if held:
+            print(f"⚠️  {s.id} : {held} marqués « signal seulement » mais détenus dans le backtest", file=sys.stderr)
     common_start = (pd.Period(a.start, "M") if a.start
                     else max(r.returns.index[0] for r in full.values()))
     common_end = min(r.returns.index[-1] for r in full.values())
