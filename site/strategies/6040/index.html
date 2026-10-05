@@ -583,6 +583,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <div class="grid-2 sheet-grid"><div class="stack">
         <section class="panel" style="--o:1"><h2>L'essentiel</h2><div class="essentials"><p>60 % d&#x27;actions pour la croissance, 40 % d&#x27;obligations pour amortir les chocs, remis à l&#x27;équilibre une fois par an. C&#x27;est le portefeuille équilibré de référence des professionnels.</p><h3>Points forts</h3><ul><li>Réduit nettement les baisses par rapport aux actions seules.</li><li>Simple, bon marché, une seule transaction par an.</li></ul><h3>Points faibles</h3><ul><li>Repose sur l&#x27;idée que les obligations montent quand les actions baissent, ce qui n&#x27;a pas marché en 2022 : -16 % cette année-là.</li><li>Rendement inférieur aux actions seules sur une longue période haussière.</li></ul><h3>À savoir</h3><p>Le rééquilibrage annuel oblige à vendre ce qui a monté pour racheter ce qui a baissé : une discipline simple, mais contre-intuitive dans les moments de stress.</p></div></section>
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules"><li>Allocation fixe : 60 % SPY, 40 % AGG.</li><li>Rééquilibrage une fois par an, fin décembre, pour revenir aux poids cibles.</li></ol></section>
+        
       </div><div class="stack">
         <section class="panel" style="--o:2"><h2>Allocation</h2><p class="sub">Fixe : rééquilibrage une fois par an, fin décembre.</p><div class="alloc"><div class="alloc-row"><span class="tk">SPY</span><span class="bar"><i style="width:60.0%"></i></span><span class="pc num">60 %</span><span class="nm">SPDR S&amp;P 500</span></div><div class="alloc-row"><span class="tk">AGG</span><span class="bar"><i style="width:40.0%"></i></span><span class="pc num">40 %</span><span class="nm">iShares Core U.S. Aggregate Bond</span></div></div></section>
         
@@ -1174,6 +1175,28 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
   }
+  // Hors échantillon : performance depuis la publication, face à la référence choisie
+  function postPanel(s) {
+    const P = EUR() && s.eur ? s.eur.post : s.post;
+    if (!P) return "";
+    const st = P.stats, refId = P[REF().id] ? REF().id : ["acwi", "spy"].find(k => P[k]), rf = refId && P[refId];
+    const rows = [
+      ["Rendement annuel", x => pct(x.cagr, 1)],
+      ["Max drawdown", x => pct(x.max_dd, 1)],
+      ["Volatilité", x => pct(x.vol, 1)],
+      ["Sharpe", x => dec(x.sharpe)],
+    ];
+    const n = st.months, short = n < 60;
+    return `<section class="panel post-pub" style="--o:6">
+            <h2>Depuis la publication</h2>
+            <p class="sub">De ${mLabel(st.start)} à ${mLabel(st.end)}, soit ${n} mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p>
+            <table class="metrics">
+              <thead><tr><th scope="col"></th><th scope="col">Stratégie</th>${rf ? `<th scope="col">${esc(REF_NAMES[refId])}</th>` : ""}</tr></thead>
+              <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td><td class="num">${f(st)}</td>${rf ? `<td class="num">${f(rf)}</td>` : ""}</tr>`).join("")}</tbody>
+            </table>
+            <p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait ${pct(src(s).stats_common.cagr, 1)} par an.${short ? " Moins de 5 ans de recul : quelques mois de marché suffisent encore à faire varier fortement ces chiffres." : ""}</p>
+          </section>`;
+  }
   // Liste « A, B et C »
   function frList(xs) { return xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " et " + xs[xs.length - 1]; }
   // Équivalents UCITS : d'abord les ETF achetés, puis ceux qui ne servent qu'au signal (canaris, filtres)
@@ -1465,6 +1488,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
             ${s.variant_note ? `<div class="callout">${rich(s.variant_note)}</div>` : ""}
             ${published ? `<div class="callout"><b>Publiée en ${mLabelLong(published)}.</b> ${pubI > base[base.length - 1].i ? "" : pubI <= base[0].i ? "Tout le backtest affiché est postérieur à la publication : c'est de la performance hors échantillon." : "La zone ombrée du graphique est postérieure à la publication : l'auteur ne la connaissait pas en concevant la stratégie."}</div>` : ""}
           </section>
+          ${postPanel(s)}
           ${UCITS ? `<section class="panel" style="--o:9">
             <h2>Avec des ETF européens</h2>
             ${ucitsBlock(s)}

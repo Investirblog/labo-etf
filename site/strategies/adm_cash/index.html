@@ -583,6 +583,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <div class="grid-2 sheet-grid"><div class="stack">
         <section class="panel" style="--o:1"><h2>L'essentiel</h2><div class="essentials"><p>La même stratégie qu&#x27;<a href="/strategies/adm/">ADM</a> pour la partie actions, mais quand les actions faiblissent, le portefeuille passe en cash au lieu d&#x27;acheter des obligations longues. C&#x27;est une variante testée par ce site, pour les investisseurs qui ne veulent pas de fonds obligataires.</p><h3>Points forts</h3><ul><li>Des baisses nettement moins profondes que les versions avec obligations, notamment en 2022, quand actions et obligations ont chuté ensemble.</li><li>Aucun risque de taux sur la partie défensive ; pour un investisseur belge, pas de fonds obligataire soumis à la taxe Reynders.</li></ul><h3>Points faibles</h3><ul><li>Moins de rendement que les versions avec obligations : le cash ne profite pas des krachs, alors que les obligations longues ont fortement monté en 2008.</li><li>Le même risque de concentration qu&#x27;ADM : 100 % sur un seul ETF quand les actions sont retenues.</li></ul><h3>À savoir</h3><p>L&#x27;écart avec la <a href="/strategies/adm_tip/">variante TLT/TIP</a> vient surtout de la période 2008-2014, quand les taux baissaient (environ les trois quarts), et de 2015-2020 pour le reste. Depuis 2021, la version cash fait mieux. Comparez les deux dans la page dédiée.</p></div></section>
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules"><li>Mêmes règles qu&#x27;<a href="/strategies/adm/">ADM</a> pour la partie actions.</li><li>En défensif : 100 % en cash (T-bills en dollars ; compte épargne au taux de dépôt de la BCE dans la vue en euros).</li></ol><div class="callout">Variante testée par ce site, pas par l&#x27;auteur d&#x27;ADM, pour un investisseur qui préfère éviter les fonds obligataires. Tout son historique est antérieur à sa création.</div><div class="callout"><b>Publiée en septembre 2026.</b></div></section>
+        
       </div><div class="stack">
         <section class="panel" style="--o:2"><h2>Signal pour octobre 2026</h2><p class="sub">Calculé sur la clôture de fin septembre 2026.</p><div class="alloc"><div class="alloc-row"><span class="tk">SPY</span><span class="bar"><i style="width:100.0%"></i></span><span class="pc num">100 %</span><span class="nm">SPDR S&amp;P 500</span></div></div></section>
         <section class="panel" style="--o:4"><h2>Historique des signaux</h2><p class="sub">4 changements sur les 12 derniers mois. En gras : le mois où l'allocation a changé.</p><table class="hist"><thead><tr><th scope="col">Mois</th><th scope="col">Allocation</th></tr></thead><tbody><tr class=""><td>oct. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>sept. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>août 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>juil. 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class="chg"><td>juin 2026</td><td class="alloc-txt">100 % SPY</td></tr><tr class="chg"><td>mai 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class="chg"><td>avr. 2026</td><td class="alloc-txt">100 % Cash</td></tr><tr class=""><td>mars 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class=""><td>févr. 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class="chg"><td>janv. 2026</td><td class="alloc-txt">100 % SCZ</td></tr><tr class=""><td>déc. 2025</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>nov. 2025</td><td class="alloc-txt">100 % SPY</td></tr><tr class=""><td>oct. 2025</td><td class="alloc-txt">100 % SPY</td></tr></tbody></table></section>
@@ -1174,6 +1175,28 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
   }
+  // Hors échantillon : performance depuis la publication, face à la référence choisie
+  function postPanel(s) {
+    const P = EUR() && s.eur ? s.eur.post : s.post;
+    if (!P) return "";
+    const st = P.stats, refId = P[REF().id] ? REF().id : ["acwi", "spy"].find(k => P[k]), rf = refId && P[refId];
+    const rows = [
+      ["Rendement annuel", x => pct(x.cagr, 1)],
+      ["Max drawdown", x => pct(x.max_dd, 1)],
+      ["Volatilité", x => pct(x.vol, 1)],
+      ["Sharpe", x => dec(x.sharpe)],
+    ];
+    const n = st.months, short = n < 60;
+    return `<section class="panel post-pub" style="--o:6">
+            <h2>Depuis la publication</h2>
+            <p class="sub">De ${mLabel(st.start)} à ${mLabel(st.end)}, soit ${n} mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p>
+            <table class="metrics">
+              <thead><tr><th scope="col"></th><th scope="col">Stratégie</th>${rf ? `<th scope="col">${esc(REF_NAMES[refId])}</th>` : ""}</tr></thead>
+              <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td><td class="num">${f(st)}</td>${rf ? `<td class="num">${f(rf)}</td>` : ""}</tr>`).join("")}</tbody>
+            </table>
+            <p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait ${pct(src(s).stats_common.cagr, 1)} par an.${short ? " Moins de 5 ans de recul : quelques mois de marché suffisent encore à faire varier fortement ces chiffres." : ""}</p>
+          </section>`;
+  }
   // Liste « A, B et C »
   function frList(xs) { return xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " et " + xs[xs.length - 1]; }
   // Équivalents UCITS : d'abord les ETF achetés, puis ceux qui ne servent qu'au signal (canaris, filtres)
@@ -1465,6 +1488,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
             ${s.variant_note ? `<div class="callout">${rich(s.variant_note)}</div>` : ""}
             ${published ? `<div class="callout"><b>Publiée en ${mLabelLong(published)}.</b> ${pubI > base[base.length - 1].i ? "" : pubI <= base[0].i ? "Tout le backtest affiché est postérieur à la publication : c'est de la performance hors échantillon." : "La zone ombrée du graphique est postérieure à la publication : l'auteur ne la connaissait pas en concevant la stratégie."}</div>` : ""}
           </section>
+          ${postPanel(s)}
           ${UCITS ? `<section class="panel" style="--o:9">
             <h2>Avec des ETF européens</h2>
             ${ucitsBlock(s)}

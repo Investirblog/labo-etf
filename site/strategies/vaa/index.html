@@ -583,6 +583,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <div class="grid-2 sheet-grid"><div class="stack">
         <section class="panel" style="--o:1"><h2>L'essentiel</h2><div class="essentials"><p>Wouter Keller pousse la protection à l&#x27;extrême : il suffit qu&#x27;un seul des quatre actifs offensifs ait un momentum négatif pour que tout le portefeuille passe en défensif.</p><h3>Points forts</h3><ul><li>Excellente protection dans les longs marchés baissiers.</li><li>Un momentum très réactif (le dernier mois pèse 40 % du score).</li></ul><h3>Points faibles</h3><ul><li>Tout ou rien sur un seul actif, avec des allers-retours fréquents.</li><li>Passe plus de la moitié du temps en défensif, ce qui coûte cher en marché haussier.</li></ul><h3>À savoir</h3><p>Allocate Smartly a montré que ses résultats changent radicalement selon le jour du mois où l&#x27;on rééquilibre. Le rééquilibrage de fin de mois n&#x27;est qu&#x27;un tirage parmi d&#x27;autres.</p></div></section>
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules"><li>Fin de mois : momentum 13612W (12×r1 + 4×r3 + 2×r6 + r12) de chaque actif.</li><li>Si SPY, EFA, EEM et AGG ont tous un momentum positif : 100 % dans celui qui a le meilleur score.</li><li>Sinon : 100 % dans le meilleur de LQD, IEF et SHY.</li></ol><div class="callout"><b>Publiée en juillet 2017.</b></div></section>
+        <section class="panel post-pub" style="--o:6"><h2>Depuis la publication</h2><p class="sub">De août 2017 à sept. 2026, soit 110 mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p><table class="metrics"><thead><tr><th scope="col"></th><th scope="col">Stratégie</th><th scope="col">Actions mondiales</th></tr></thead><tbody><tr><td>Rendement annuel</td><td class="num">4,3 %</td><td class="num">11,8 %</td></tr><tr><td>Max drawdown</td><td class="num">-20,9 %</td><td class="num">-25,7 %</td></tr><tr><td>Volatilité</td><td class="num">9,9 %</td><td class="num">15,2 %</td></tr><tr><td>Sharpe</td><td class="num">0,23</td><td class="num">0,65</td></tr></tbody></table><p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait 6,0 % par an.</p></section>
       </div><div class="stack">
         <section class="panel" style="--o:2"><h2>Signal pour octobre 2026</h2><p class="sub">Calculé sur la clôture de fin septembre 2026.</p><div class="alloc"><div class="alloc-row"><span class="tk">SHY</span><span class="bar"><i style="width:100.0%"></i></span><span class="pc num">100 %</span><span class="nm">iShares 1-3 Year Treasury Bond</span></div></div></section>
         <section class="panel" style="--o:4"><h2>Historique des signaux</h2><p class="sub">3 changements sur les 12 derniers mois. En gras : le mois où l'allocation a changé.</p><table class="hist"><thead><tr><th scope="col">Mois</th><th scope="col">Allocation</th></tr></thead><tbody><tr class=""><td>oct. 2026</td><td class="alloc-txt">100 % SHY</td></tr><tr class=""><td>sept. 2026</td><td class="alloc-txt">100 % SHY</td></tr><tr class="chg"><td>août 2026</td><td class="alloc-txt">100 % SHY</td></tr><tr class=""><td>juil. 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>juin 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class="chg"><td>mai 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class="chg"><td>avr. 2026</td><td class="alloc-txt">100 % SHY</td></tr><tr class=""><td>mars 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>févr. 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>janv. 2026</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>déc. 2025</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>nov. 2025</td><td class="alloc-txt">100 % EEM</td></tr><tr class=""><td>oct. 2025</td><td class="alloc-txt">100 % EEM</td></tr></tbody></table></section>
@@ -1174,6 +1175,28 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
   }
+  // Hors échantillon : performance depuis la publication, face à la référence choisie
+  function postPanel(s) {
+    const P = EUR() && s.eur ? s.eur.post : s.post;
+    if (!P) return "";
+    const st = P.stats, refId = P[REF().id] ? REF().id : ["acwi", "spy"].find(k => P[k]), rf = refId && P[refId];
+    const rows = [
+      ["Rendement annuel", x => pct(x.cagr, 1)],
+      ["Max drawdown", x => pct(x.max_dd, 1)],
+      ["Volatilité", x => pct(x.vol, 1)],
+      ["Sharpe", x => dec(x.sharpe)],
+    ];
+    const n = st.months, short = n < 60;
+    return `<section class="panel post-pub" style="--o:6">
+            <h2>Depuis la publication</h2>
+            <p class="sub">De ${mLabel(st.start)} à ${mLabel(st.end)}, soit ${n} mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p>
+            <table class="metrics">
+              <thead><tr><th scope="col"></th><th scope="col">Stratégie</th>${rf ? `<th scope="col">${esc(REF_NAMES[refId])}</th>` : ""}</tr></thead>
+              <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td><td class="num">${f(st)}</td>${rf ? `<td class="num">${f(rf)}</td>` : ""}</tr>`).join("")}</tbody>
+            </table>
+            <p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait ${pct(src(s).stats_common.cagr, 1)} par an.${short ? " Moins de 5 ans de recul : quelques mois de marché suffisent encore à faire varier fortement ces chiffres." : ""}</p>
+          </section>`;
+  }
   // Liste « A, B et C »
   function frList(xs) { return xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " et " + xs[xs.length - 1]; }
   // Équivalents UCITS : d'abord les ETF achetés, puis ceux qui ne servent qu'au signal (canaris, filtres)
@@ -1465,6 +1488,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
             ${s.variant_note ? `<div class="callout">${rich(s.variant_note)}</div>` : ""}
             ${published ? `<div class="callout"><b>Publiée en ${mLabelLong(published)}.</b> ${pubI > base[base.length - 1].i ? "" : pubI <= base[0].i ? "Tout le backtest affiché est postérieur à la publication : c'est de la performance hors échantillon." : "La zone ombrée du graphique est postérieure à la publication : l'auteur ne la connaissait pas en concevant la stratégie."}</div>` : ""}
           </section>
+          ${postPanel(s)}
           ${UCITS ? `<section class="panel" style="--o:9">
             <h2>Avec des ETF européens</h2>
             ${ucitsBlock(s)}
