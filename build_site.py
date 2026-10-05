@@ -332,6 +332,25 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
                       f'{"Son cours est public" if one else "Leurs cours sont publics"} : on peut suivre directement '
                       f"l'ETF américain, ou son équivalent UCITS.</p>"
                       f'<div class="ucits-list is-signal">{"".join(ucits_item(a, uc) for a in sig_only)}</div>')
+    post = ""
+    P = s.get("post")
+    if P:
+        pst = P["stats"]
+        pref = ref["id"] if P.get(ref["id"]) else next((k for k in ("acwi", "spy") if P.get(k)), None)
+        prf = P.get(pref) if pref else None
+        prow = [("Rendement annuel", lambda x: pct(x["cagr"])), ("Max drawdown", lambda x: pct(x["max_dd"])),
+                ("Volatilité", lambda x: pct(x["vol"])), ("Sharpe", lambda x: dec(x["sharpe"]))]
+        short = pst["months"] < 60
+        post = (f'<section class="panel post-pub" style="--o:6"><h2>Depuis la publication</h2>'
+                f'<p class="sub">De {m_label(pst["start"])} à {m_label(pst["end"])}, soit {pst["months"]} mois : la seule période '
+                f"que l'auteur ne connaissait pas en concevant les règles.</p>"
+                f'<table class="metrics"><thead><tr><th scope="col"></th><th scope="col">Stratégie</th>'
+                + (f'<th scope="col">{e(REF_NAMES[pref])}</th>' if prf else "") + "</tr></thead><tbody>"
+                + "".join(f'<tr><td>{l}</td><td class="num">{fn(pst)}</td>' + (f'<td class="num">{fn(prf)}</td>' if prf else "") + "</tr>"
+                          for l, fn in prow)
+                + f'</tbody></table><p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait {pct(st["cagr"])} par an.'
+                + (" Moins de 5 ans de recul : quelques mois de marché suffisent encore à faire varier fortement ces chiffres." if short else "")
+                + "</p></section>")
     metrics = [
         ("Début", lambda x: m_label(x["start"])), ("CAGR", lambda x: pct(x["cagr"])),
         ("Volatilité", lambda x: pct(x["vol"])), ("Sharpe", lambda x: dec(x["sharpe"])),
@@ -363,6 +382,7 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
       <div class="grid-2 sheet-grid"><div class="stack">
         {ess}
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules">{''.join(f'<li>{rich(r)}</li>' for r in rules_for(s))}</ol>{extra}</section>
+        {post}
       </div><div class="stack">
         <section class="panel" style="--o:2">{sig_head}<div class="alloc">{sig}</div></section>
         {history_html(s)}

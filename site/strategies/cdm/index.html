@@ -583,6 +583,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <div class="grid-2 sheet-grid"><div class="stack">
         <section class="panel" style="--o:1"><h2>L'essentiel</h2><div class="essentials"><p>Quatre modules de 25 %, chacun avec son propre double momentum sur 12 mois : actions (US ou international), crédit (entreprises ou haut rendement), immobilier (REIT d&#x27;actifs ou hypothécaires), stress économique (or ou obligations longues).</p><h3>Points forts</h3><ul><li>Diversifie les sources de momentum : chaque module peut se protéger indépendamment.</li><li>Moins dépendant des seules actions que GEM.</li></ul><h3>Points faibles</h3><ul><li>Les REIT hypothécaires (REM) sont très volatils.</li><li>Le momentum sur 12 mois réagit lentement, comme pour GEM.</li></ul><h3>À savoir</h3><p>Antonacci a publié cette stratégie en 2012, deux ans avant <a href="/strategies/gem/">GEM</a>. Elle est moins connue mais plus diversifiée.</p></div></section>
         <section class="panel" style="--o:5"><h2>Règles</h2><ol class="rules"><li>Quatre modules de 25 % : actions (SPY/EFA), crédit (LQD/HYG), immobilier (VNQ/REM), stress économique (GLD/TLT).</li><li>Dans chaque module : l&#x27;actif au meilleur rendement sur 12 mois.</li><li>S&#x27;il fait moins bien que les T-bills sur 12 mois, la part du module va en cash.</li></ol><div class="callout"><b>Publiée en avril 2012.</b></div></section>
+        <section class="panel post-pub" style="--o:6"><h2>Depuis la publication</h2><p class="sub">De mai 2012 à sept. 2026, soit 173 mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p><table class="metrics"><thead><tr><th scope="col"></th><th scope="col">Stratégie</th><th scope="col">Actions mondiales</th></tr></thead><tbody><tr><td>Rendement annuel</td><td class="num">4,3 %</td><td class="num">11,1 %</td></tr><tr><td>Max drawdown</td><td class="num">-14,3 %</td><td class="num">-25,7 %</td></tr><tr><td>Volatilité</td><td class="num">7,6 %</td><td class="num">13,7 %</td></tr><tr><td>Sharpe</td><td class="num">0,38</td><td class="num">0,72</td></tr></tbody></table><p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait 5,3 % par an.</p></section>
       </div><div class="stack">
         <section class="panel" style="--o:2"><h2>Signal pour octobre 2026</h2><p class="sub">Calculé sur la clôture de fin septembre 2026.</p><div class="alloc"><div class="alloc-row"><span class="tk">Cash</span><span class="bar"><i style="width:50.0%"></i></span><span class="pc num">50 %</span><span class="nm">T-bills (BIL)</span></div><div class="alloc-row"><span class="tk">SPY</span><span class="bar"><i style="width:25.0%"></i></span><span class="pc num">25 %</span><span class="nm">SPDR S&amp;P 500</span></div><div class="alloc-row"><span class="tk">GLD</span><span class="bar"><i style="width:25.0%"></i></span><span class="pc num">25 %</span><span class="nm">SPDR Gold Shares</span></div></div></section>
         <section class="panel" style="--o:4"><h2>Historique des signaux</h2><p class="sub">6 changements sur les 12 derniers mois. En gras : le mois où l'allocation a changé.</p><table class="hist"><thead><tr><th scope="col">Mois</th><th scope="col">Allocation</th></tr></thead><tbody><tr class="chg"><td>oct. 2026</td><td class="alloc-txt">50 % Cash · 25 % chacun : GLD, SPY</td></tr><tr class=""><td>sept. 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, VNQ</td></tr><tr class="chg"><td>août 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, VNQ</td></tr><tr class=""><td>juil. 2026</td><td class="alloc-txt">25 % chacun : GLD, HYG, REM, SPY</td></tr><tr class=""><td>juin 2026</td><td class="alloc-txt">25 % chacun : GLD, HYG, REM, SPY</td></tr><tr class="chg"><td>mai 2026</td><td class="alloc-txt">25 % chacun : GLD, HYG, REM, SPY</td></tr><tr class="chg"><td>avr. 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, REM</td></tr><tr class="chg"><td>mars 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, VNQ</td></tr><tr class=""><td>févr. 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, REM</td></tr><tr class=""><td>janv. 2026</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, REM</td></tr><tr class=""><td>déc. 2025</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, REM</td></tr><tr class="chg"><td>nov. 2025</td><td class="alloc-txt">25 % chacun : EFA, GLD, HYG, REM</td></tr><tr class=""><td>oct. 2025</td><td class="alloc-txt">25 % chacun : GLD, HYG, SPY, Cash</td></tr></tbody></table></section>
@@ -1174,6 +1175,28 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
   }
+  // Hors échantillon : performance depuis la publication, face à la référence choisie
+  function postPanel(s) {
+    const P = EUR() && s.eur ? s.eur.post : s.post;
+    if (!P) return "";
+    const st = P.stats, refId = P[REF().id] ? REF().id : ["acwi", "spy"].find(k => P[k]), rf = refId && P[refId];
+    const rows = [
+      ["Rendement annuel", x => pct(x.cagr, 1)],
+      ["Max drawdown", x => pct(x.max_dd, 1)],
+      ["Volatilité", x => pct(x.vol, 1)],
+      ["Sharpe", x => dec(x.sharpe)],
+    ];
+    const n = st.months, short = n < 60;
+    return `<section class="panel post-pub" style="--o:6">
+            <h2>Depuis la publication</h2>
+            <p class="sub">De ${mLabel(st.start)} à ${mLabel(st.end)}, soit ${n} mois : la seule période que l'auteur ne connaissait pas en concevant les règles.</p>
+            <table class="metrics">
+              <thead><tr><th scope="col"></th><th scope="col">Stratégie</th>${rf ? `<th scope="col">${esc(REF_NAMES[refId])}</th>` : ""}</tr></thead>
+              <tbody>${rows.map(([l, f]) => `<tr><td>${l}</td><td class="num">${f(st)}</td>${rf ? `<td class="num">${f(rf)}</td>` : ""}</tr>`).join("")}</tbody>
+            </table>
+            <p class="sub" style="margin:0">Sur toute la période commune, la stratégie fait ${pct(src(s).stats_common.cagr, 1)} par an.${short ? " Moins de 5 ans de recul : quelques mois de marché suffisent encore à faire varier fortement ces chiffres." : ""}</p>
+          </section>`;
+  }
   // Liste « A, B et C »
   function frList(xs) { return xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " et " + xs[xs.length - 1]; }
   // Équivalents UCITS : d'abord les ETF achetés, puis ceux qui ne servent qu'au signal (canaris, filtres)
@@ -1465,6 +1488,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
             ${s.variant_note ? `<div class="callout">${rich(s.variant_note)}</div>` : ""}
             ${published ? `<div class="callout"><b>Publiée en ${mLabelLong(published)}.</b> ${pubI > base[base.length - 1].i ? "" : pubI <= base[0].i ? "Tout le backtest affiché est postérieur à la publication : c'est de la performance hors échantillon." : "La zone ombrée du graphique est postérieure à la publication : l'auteur ne la connaissait pas en concevant la stratégie."}</div>` : ""}
           </section>
+          ${postPanel(s)}
           ${UCITS ? `<section class="panel" style="--o:9">
             <h2>Avec des ETF européens</h2>
             ${ucitsBlock(s)}

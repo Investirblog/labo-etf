@@ -125,6 +125,26 @@ def main(argv=None) -> int:
         cash = w[engine.CASH] * rf_eur.reindex(idx).fillna(0.0) if engine.CASH in w else 0.0
         return (risky + cash - res.costs.loc[idx]).dropna()
 
+    def post_pub(s, rets: dict, rf_) -> dict | None:
+        """Performance hors échantillon : les mois qui suivent la publication de la stratégie,
+        avec les deux références sur la même période. None si la publication précède le début
+        du backtest (tout est alors hors échantillon) ou s'il y a moins de 12 mois de recul."""
+        pub = s.meta.get("published")
+        r = rets[s.id]
+        if not pub:
+            return None
+        start = pd.Period(pub, "M") + 1
+        if start <= r.index[0] or len(r.loc[start:]) < 12:
+            return None
+        out = {"published": pub, "stats": stats(r.loc[start:], rf_)}
+        for ref in ("acwi", "spy"):
+            if ref in rets and rets[ref].index[0] <= start:  # seulement si la référence couvre toute la période
+                out[ref] = stats(rets[ref].loc[start:], rf_)
+        return out
+
+    rets_usd = {k: v.returns for k, v in full.items()}
+    rets_eur = {k: to_eur(v) for k, v in full.items()} if fx is not None else {}
+
     rows_full, rows_common, site = [], [], []
     for s in strategies:
         r = full[s.id]
@@ -147,6 +167,8 @@ def main(argv=None) -> int:
             "avg_turnover_year": float(r.turnover.sum() / (len(r.returns) / 12)),
             # signaux des 13 derniers mois (mois de détention -> poids), pour la page « Signaux du mois »
             "signal_history": signal_history(s, returns, rf),
+            # performance depuis la publication (hors échantillon), avec les références
+            "post": post_pub(s, rets_usd, rf),
         })
         if fx is not None:
             re_ = to_eur(r)
@@ -155,6 +177,7 @@ def main(argv=None) -> int:
                     "stats_full": stats(re_, rf_eur),
                     "stats_common": stats(re_.loc[common_start:common_end], rf_eur),
                     "equity": {str(k): round(float(v), 5) for k, v in (1 + re_).cumprod().items()},
+                    "post": post_pub(s, rets_eur, rf_eur),
                 }
 
     out = ROOT / "results"
