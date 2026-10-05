@@ -265,6 +265,12 @@ def rules_for(s) -> list[str]:
     return ["Allocation fixe : " + ", ".join(f"{weight_text(v)} {k}" for k, v in w) + ".", rb]
 
 
+def fr_list(xs) -> str:
+    """« A, B et C »."""
+    xs = list(xs)
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " et " + xs[-1]
+
+
 def ucits_item(t, uc) -> str:
     m = uc["map"].get(t)
     if not m:
@@ -309,8 +315,23 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
         extra += f'<div class="callout">{rich(s["variant_note"])}</div>'
     if s.get("published"):
         extra += f'<div class="callout"><b>Publiée en {m_long(s["published"])}.</b></div>'
-    assets = list(dict.fromkeys(s["assets"] + (["CASH"] if s.get("uses_cash") or "CASH" in s["next_signal"]["weights"] else [])))
-    ucits = "".join(ucits_item(a, uc) for a in assets) if uc else ""
+    sig_only = s.get("signal_only") or []
+    assets = [a for a in dict.fromkeys(s["assets"] + (["CASH"] if s.get("uses_cash") or "CASH" in s["next_signal"]["weights"] else []))
+              if a not in sig_only]
+    ucits = ""
+    if uc:
+        one = len(sig_only) == 1
+        ucits = (f'<p class="sub">Les ETF américains ne sont pas accessibles aux particuliers européens. Voici les équivalents '
+                 f'UCITS des ETF {"que la stratégie achète" if sig_only else "utilisés"}.</p>'
+                 f'<div class="ucits-list">{"".join(ucits_item(a, uc) for a in assets)}</div>')
+        if sig_only:
+            achete = "l'achète" if one else "les achète"
+            ucits += (f'<h3 class="ucits-h">{"Indicateur" if one else "Indicateurs"} : ne pas acheter</h3>'
+                      f'<p class="sub">{e(fr_list(sig_only))} {"sert" if one else "servent"} seulement à calculer le signal : '
+                      f'la stratégie ne {achete} jamais. '
+                      f'{"Son cours est public" if one else "Leurs cours sont publics"} : on peut suivre directement '
+                      f"l'ETF américain, ou son équivalent UCITS.</p>"
+                      f'<div class="ucits-list is-signal">{"".join(ucits_item(a, uc) for a in sig_only)}</div>')
     metrics = [
         ("Début", lambda x: m_label(x["start"])), ("CAGR", lambda x: pct(x["cagr"])),
         ("Volatilité", lambda x: pct(x["vol"])), ("Sharpe", lambda x: dec(x["sharpe"])),
@@ -345,7 +366,7 @@ def sheet_html(s, data, fiches, uc, ref) -> str:
       </div><div class="stack">
         <section class="panel" style="--o:2">{sig_head}<div class="alloc">{sig}</div></section>
         {history_html(s)}
-        {f'<section class="panel" style="--o:9"><h2>Avec des ETF européens</h2><div class="ucits-list">{ucits}</div></section>' if ucits else ''}
+        {f'<section class="panel" style="--o:9"><h2>Avec des ETF européens</h2>{ucits}</section>' if ucits else ''}
         <section class="panel" style="--o:10"><h2>Toutes les mesures</h2><table class="metrics"><thead><tr><th scope="col"></th>{mhead}</tr></thead><tbody>{mt}</tbody></table></section>
         {same_family_html(s, data)}
       </div></div>"""
