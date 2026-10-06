@@ -75,6 +75,9 @@ def stats(r: pd.Series, rf: pd.Series) -> dict:
     uw = underwater(r)
     out["underwater_months"], out["underwater_start"], out["underwater_end"], out["underwater_ongoing"] = uw
     out["calmar"] = out["cagr"] / abs(out["max_dd"]) if out["max_dd"] < 0 else np.nan
+    # UPI (Ulcer Performance Index, Peter Martin) : rendement au-delà du cash, divisé par l'ulcer index.
+    # Un « Sharpe » qui ne pénalise que les baisses, d'autant plus qu'elles sont profondes et longues.
+    out["upi"] = (out["cagr"] - _cagr(rf)) / out["ulcer"] if out["ulcer"] > 0 else np.nan
     for y in (5, 10):
         rc = rolling_cagr(r, y)
         out[f"roll{y}_min"] = float(rc.min()) if len(rc) else np.nan
