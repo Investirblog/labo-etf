@@ -183,6 +183,18 @@ table.board { width: 100%; border-collapse: collapse; min-width: 880px; }
 .alloc-row .tk { font-family: var(--f-mono); font-weight: 500; }
 .alloc-row .bar { height: 8px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
 .alloc-row .bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.calc { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule); display: grid; gap: 10px; }
+.calc h3 { font-family: var(--f-display); font-weight: 600; font-size: 14.5px; margin: 0; }
+.calc label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-2); }
+.calc input { font: inherit; font-family: var(--f-mono); width: 9.5em; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); color: var(--ink); text-align: right; }
+.calc input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.calc-out { display: grid; gap: 6px; }
+.calc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: 13.5px; align-items: baseline; padding-bottom: 6px; border-bottom: 1px dashed var(--rule-soft); }
+.calc-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.calc-row .who { min-width: 0; }
+.calc-row .who b { font-family: var(--f-mono); font-weight: 600; }
+.calc-row .who span { color: var(--ink-3); font-size: 12px; }
+.calc-row .amt { font-family: var(--f-mono); font-weight: 600; white-space: nowrap; }
 .alloc-row .pc { text-align: right; }
 .alloc-row .nm { grid-column: 2 / 4; font-size: 12px; color: var(--ink-3); margin-top: -6px; }
 .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 9px; border-radius: 99px;
@@ -492,12 +504,13 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
 @media (max-width: 1080px) and (min-width: 641px) {
   /* tablette : stratégie, CAGR, Sharpe, Max DD, Récup., Pire année */
   .board th:nth-child(4), .board td:nth-child(4),
-  .board th:nth-child(9), .board td:nth-child(9),
-  .board th:nth-child(10), .board td:nth-child(10) { display: none; }
+  .board th:nth-child(6), .board td:nth-child(6),
+  .board th:nth-child(10), .board td:nth-child(10),
+  .board th:nth-child(11), .board td:nth-child(11) { display: none; }
   .board th:first-child, .board td:first-child { min-width: 0; }
 }
 @media (max-width: 720px) and (min-width: 641px) {
-  .board th:nth-child(8), .board td:nth-child(8) { display: none; }
+  .board th:nth-child(9), .board td:nth-child(9) { display: none; }
 }
 @media (max-width: 640px) {
   .ucits thead { display: none; }
@@ -526,10 +539,11 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   .board th:first-child, .board td:first-child { min-width: 0; padding-left: 12px; }
   .board th:nth-child(2), .board td:nth-child(2),
   .board th:nth-child(4), .board td:nth-child(4),
-  .board th:nth-child(7), .board td:nth-child(7),
+  .board th:nth-child(6), .board td:nth-child(6),
   .board th:nth-child(8), .board td:nth-child(8),
   .board th:nth-child(9), .board td:nth-child(9),
-  .board th:nth-child(10), .board td:nth-child(10) { display: none; }
+  .board th:nth-child(10), .board td:nth-child(10),
+  .board th:nth-child(11), .board td:nth-child(11) { display: none; }
   .board th, .board td { padding-inline: 5px; }
   .board th { letter-spacing: .02em; font-size: 11px; }
   .board td.num { font-size: 12px; white-space: nowrap; }
@@ -915,6 +929,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     { key: "cagr", label: "CAGR" },
     { key: "vol", label: "Volat." },
     { key: "sharpe", label: "Sharpe" },
+    { key: "upi", label: "UPI" },
     { key: "max_dd", label: "Max DD" },
     { key: "underwater_months", label: "Récup." },
     { key: "worst_year", label: "Pire année" },
@@ -928,7 +943,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     if (key === "name") return "Classées par ordre alphabétique.";
     const lab = COLS.find(c => c.key === key)?.label || key;
     const best = (dir < 0) !== ASC_KEYS.includes(key);
-    return `Classées par <b>${lab}</b>${key === "sharpe" ? " (rendement par unité de risque)" : ""}, ${best ? "du meilleur au moins bon" : "du moins bon au meilleur"}.`;
+    return `Classées par <b>${lab}</b>${key === "sharpe" ? " (rendement par unité de risque)" : key === "upi" ? " (rendement par unité de « souffrance » : profondeur et durée des baisses)" : ""}, ${best ? "du meilleur au moins bon" : "du moins bon au meilleur"}.`;
   }
 
   function renderBoard() {
@@ -981,6 +996,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
               <td class="num">${pct(st.cagr, 1)}</td>
               <td class="num">${pct(st.vol, 1)}</td>
               <td class="num">${dec(st.sharpe)}</td>
+              <td class="num">${dec(st.upi, 1)}</td>
               <td class="num neg">${pct(st.max_dd, 1)}</td>
               <td class="num" title="${st.underwater_start ? `Sous le sommet de ${mLabel(st.underwater_start)} à ${st.underwater_end ? mLabel(st.underwater_end) : "aujourd'hui"}` : ""}">${uwText(st)}</td>
               <td class="num ${cls(st.worst_year)}">${pct(st.worst_year, 1, true)}</td>
@@ -989,7 +1005,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
           </tbody>
         </table>
       </div>
-      <p class="note-under">CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. Max DD : pire baisse depuis un sommet, en fin de mois. Récup. : plus longue période passée sous un sommet précédent, c'est-à-dire le plus long délai pour retrouver son argent (« + » : pas encore récupéré). Pire année : pire année civile complète (les années commencées ou non terminées ne comptent pas). Pire 10 ans : le plus mauvais rendement annualisé sur toutes les périodes de 10 ans glissantes.${state.window === "full" ? " En historique complet, chaque stratégie a sa propre date de départ : les chiffres ne se comparent pas directement." : ""}</p>
+      <p class="note-under">CAGR : rendement annualisé. Sharpe : rendement au-delà des T-bills, divisé par la volatilité. UPI : rendement au-delà des T-bills, divisé par l'ulcer index, qui mesure la profondeur et la durée des baisses ; contrairement au Sharpe, il ne pénalise que les baisses. Max DD : pire baisse depuis un sommet, en fin de mois. Récup. : plus longue période passée sous un sommet précédent, c'est-à-dire le plus long délai pour retrouver son argent (« + » : pas encore récupéré). Pire année : pire année civile complète (les années commencées ou non terminées ne comptent pas). Pire 10 ans : le plus mauvais rendement annualisé sur toutes les périodes de 10 ans glissantes.${state.window === "full" ? " En historique complet, chaque stratégie a sa propre date de départ : les chiffres ne se comparent pas directement." : ""}</p>
       <section class="scatter-wrap" aria-labelledby="sc-title">
         <h2 id="sc-title">Ce que chaque stratégie a rapporté, et ce qu'elle a fait traverser</h2>
         <p class="sub">Chaque point est une stratégie, de ${mLabel(c0)} à ${mLabel(c1)} : son rendement annuel en hauteur, sa pire baisse en largeur. La ligne relie le cash à la référence choisie : elle représente, de façon approximative, tous les mélanges actions + cash. Un point au-dessus de la ligne a obtenu plus de rendement pour une même pire baisse.</p>
@@ -1163,6 +1179,45 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     return `<section class="panel" style="--o:11"><h2>Même famille</h2><p class="sub">Rendement annuel et pire baisse sur la période commune.</p>
       <ul class="kin">${others.map(x => `<li><a href="${href(x.id)}">${esc(x.name)}</a><span class="num">${pct(x.stats_common.cagr, 1)} /an · ${pct(x.stats_common.max_dd, 1)}</span></li>`).join("")}</ul>
       ${PATH_MODE && fp ? `<a href="${BASE + fp[0]}">Toute la famille « ${fp[1]} »</a>` : ""}</section>`;
+  }
+  // Calculateur : répartit un montant selon l'allocation du mois, avec les ETF UCITS
+  let CALC_AMT = 10000;
+  try { const v = +localStorage.getItem("esl-calc"); if (v > 0) CALC_AMT = v; } catch (e) {}
+  function calcBlock() {
+    return `<div class="calc">
+              <h3>Combien mettre dans chaque ETF ?</h3>
+              <label for="calc-amt">Montant à répartir
+                <input id="calc-amt" type="text" inputmode="numeric" autocomplete="off" value="${nf(0).format(CALC_AMT)}" aria-describedby="calc-note"> €</label>
+              <div class="calc-out" id="calc-out" aria-live="polite"></div>
+              <p class="sub" id="calc-note" style="margin:0">Avec les équivalents européens (UCITS), avant frais de courtage et taxes. Pour le nombre de parts, divisez chaque montant par le cours de l'ETF chez votre courtier.</p>
+            </div>`;
+  }
+  function ucitsTicker(k) {
+    const m = UCITS && UCITS.map[k];
+    if (!m || !m.funds.length) return null;
+    return m.funds.map(f => UCITS._funds[f].tickers.split(" (")[0]).join(" + ");
+  }
+  // « 10 000 », « 10.000 » ou « 10000,50 » : espaces et points de milliers ignorés, virgule décimale
+  const parseAmt = v => parseFloat(String(v).replace(/[\s\u00a0\u202f.]/g, "").replace(",", ".")) || 0;
+  function bindCalc(s) {
+    const inp = document.getElementById("calc-amt"), out = document.getElementById("calc-out");
+    if (!inp || !out) return;
+    const weights = Object.entries(s.next_signal.weights).sort((a, b) => b[1] - a[1]);
+    const eur = nf(0);
+    const draw = () => {
+      const amt = parseAmt(inp.value) || 0;
+      if (amt > 0) { CALC_AMT = amt; try { localStorage.setItem("esl-calc", String(amt)); } catch (e) {} }
+      out.innerHTML = weights.map(([k, v]) => {
+        const u = ucitsTicker(k);
+        const who = k === "CASH"
+          ? `<b>${esc(u || "Cash")}</b> <span>cash${u ? " (ou compte d'épargne)" : ""}</span>`
+          : u ? `<b>${esc(u)}</b> <span>à la place de ${esc(k)}</span>` : `<b>${esc(k)}</b> <span>pas d'équivalent UCITS</span>`;
+        return `<div class="calc-row"><span class="who">${who}</span><span class="amt">${eur.format(Math.round(amt * v))}&nbsp;€</span></div>`;
+      }).join("");
+    };
+    inp.addEventListener("input", draw);
+    inp.addEventListener("blur", () => { const a = parseAmt(inp.value); if (a > 0) inp.value = nf(0).format(a); });
+    draw();
   }
   // Hors échantillon : performance depuis la publication, face à la référence choisie
   function postPanel(s) {
@@ -1468,6 +1523,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
               <div class="alloc-row"><span class="tk">${k === "CASH" ? "Cash" : esc(k)}</span><span class="bar"><i style="width:${(v * 100).toFixed(1)}%"></i></span><span class="pc num">${nf(v * 100 % 1 ? 1 : 0).format(v * 100)}&nbsp;%</span>
               <span class="nm">${k === "CASH" ? "T-bills (BIL)" : esc(names[k] || "")}</span></div>`).join("")}
             </div>
+            ${calcBlock()}
           </section>
           ${historyPanel(s)}
           <section class="panel" style="--o:5">
@@ -1498,6 +1554,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
                 ["Creux du drawdown", x => mLabel(x.max_dd_trough)],
                 ["Récupéré en", x => x.max_dd_recovery ? mLabel(x.max_dd_recovery) : "pas encore"],
                 ["Ulcer index", x => pct(x.ulcer, 1)],
+                ["UPI (rendement / ulcer index)", x => dec(x.upi, 2)],
                 ["Meilleure année civile complète", x => pct(x.best_year, 1, true)],
                 ["Pire année civile complète", x => pct(x.worst_year, 1, true)],
                 ["Mois positifs", x => pct(x.pct_pos_months, 0)],
@@ -1527,6 +1584,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     });
     annualBars(document.getElementById("c-yr"), annual(base), spyPts ? annual(spyPts) : [], s.name, BN());
     drawRolling(s, base, spyPts);
+    bindCalc(s);
     bindBench(() => renderSheet(s));
     bindCcy(() => renderSheet(s));
 
