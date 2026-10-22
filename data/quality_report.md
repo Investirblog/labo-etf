@@ -1,4 +1,4 @@
-# Rapport qualité — 2026-10-04
+# Rapport qualité — 2026-10-22
 
 - ETF traités : 45/42 · erreurs : 0 · alertes : 0
 - Fenêtre commune (tous les ETF traités disponibles) : à partir de 2008-05

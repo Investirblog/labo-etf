@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T12:20:35+00:00",
+  "generated_at": "2026-10-22T08:01:12+00:00",
   "source": "yfinance, cours ajustés (dividendes réinvestis, splits corrigés)",
   "common_window_start": "2008-05",
   "etfs": {
@@ -9,7 +9,7 @@
       "first_month": "2008-04",
       "last_month": "2026-09",
       "months": 222,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "SPY": {
@@ -18,7 +18,7 @@
       "first_month": "1993-02",
       "last_month": "2026-09",
       "months": 404,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "IVV": {
@@ -27,7 +27,7 @@
       "first_month": "2000-06",
       "last_month": "2026-09",
       "months": 316,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "VTI": {
@@ -36,7 +36,7 @@
       "first_month": "2001-07",
       "last_month": "2026-09",
       "months": 303,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "QQQ": {
@@ -45,7 +45,7 @@
       "first_month": "1999-04",
       "last_month": "2026-09",
       "months": 330,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "IWM": {
@@ -54,7 +54,7 @@
       "first_month": "2000-06",
       "last_month": "2026-09",
       "months": 316,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "IVE": {
@@ -63,7 +63,7 @@
       "first_month": "2000-06",
       "last_month": "2026-09",
       "months": 316,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "IWN": {
@@ -72,7 +72,7 @@
       "first_month": "2000-08",
       "last_month": "2026-09",
       "months": 314,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "EFA": {
@@ -81,7 +81,7 @@
       "first_month": "2001-09",
       "last_month": "2026-09",
       "months": 301,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "VEA": {
@@ -90,7 +90,7 @@
       "first_month": "2007-08",
       "last_month": "2026-09",
       "months": 230,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "VGK": {
@@ -99,7 +99,7 @@
       "first_month": "2005-04",
       "last_month": "2026-09",
       "months": 258,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "EWJ": {
@@ -108,7 +108,7 @@
       "first_month": "1996-04",
       "last_month": "2026-09",
       "months": 366,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "SCZ": {
@@ -117,7 +117,7 @@
       "first_month": "2008-01",
       "last_month": "2026-09",
       "months": 225,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "ACWX": {
@@ -126,7 +126,7 @@
       "first_month": "2008-05",
       "last_month": "2026-09",
       "months": 221,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "EEM": {
@@ -135,7 +135,7 @@
       "first_month": "2003-05",
       "last_month": "2026-09",
       "months": 281,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "VWO": {
@@ -144,7 +144,7 @@
       "first_month": "2005-04",
       "last_month": "2026-09",
       "months": 258,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "VNQ": {
@@ -153,7 +153,7 @@
       "first_month": "2004-10",
       "last_month": "2026-09",
       "months": 264,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "REM": {
@@ -162,7 +162,7 @@
       "first_month": "2007-06",
       "last_month": "2026-09",
       "months": 232,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "RWX": {
@@ -171,7 +171,7 @@
       "first_month": "2007-01",
       "last_month": "2026-09",
       "months": 237,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "GLD": {
@@ -180,7 +180,7 @@
       "first_month": "2004-12",
       "last_month": "2026-09",
       "months": 262,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "DBC": {
@@ -189,7 +189,7 @@
       "first_month": "2006-03",
       "last_month": "2026-09",
       "months": 247,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "GSG": {
@@ -198,7 +198,7 @@
       "first_month": "2006-08",
       "last_month": "2026-09",
       "months": 242,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "TLT": {
@@ -207,7 +207,7 @@
       "first_month": "2002-08",
       "last_month": "2026-09",
       "months": 290,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "IEF": {
@@ -216,7 +216,7 @@
       "first_month": "2002-08",
       "last_month": "2026-09",
       "months": 290,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "SHY": {
@@ -225,7 +225,7 @@
       "first_month": "2002-08",
       "last_month": "2026-09",
       "months": 290,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "SHV": {
@@ -234,7 +234,7 @@
       "first_month": "2007-02",
       "last_month": "2026-09",
       "months": 236,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "BIL": {
@@ -243,7 +243,7 @@
       "first_month": "2007-06",
       "last_month": "2026-09",
       "months": 232,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "TIP": {
@@ -252,7 +252,7 @@
       "first_month": "2004-01",
       "last_month": "2026-09",
       "months": 273,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "AGG": {
@@ -261,7 +261,7 @@
       "first_month": "2003-10",
       "last_month": "2026-09",
       "months": 276,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "BND": {
@@ -270,7 +270,7 @@
       "first_month": "2007-05",
       "last_month": "2026-09",
       "months": 233,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "LQD": {
@@ -279,7 +279,7 @@
       "first_month": "2002-08",
       "last_month": "2026-09",
       "months": 290,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "HYG": {
@@ -288,7 +288,7 @@
       "first_month": "2007-05",
       "last_month": "2026-09",
       "months": 233,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "BWX": {
@@ -297,7 +297,7 @@
       "first_month": "2007-11",
       "last_month": "2026-09",
       "months": 227,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLB": {
@@ -306,7 +306,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLE": {
@@ -315,7 +315,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLF": {
@@ -324,7 +324,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLI": {
@@ -333,7 +333,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLK": {
@@ -342,7 +342,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLP": {
@@ -351,7 +351,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLU": {
@@ -360,7 +360,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLV": {
@@ -369,7 +369,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "XLY": {
@@ -378,7 +378,7 @@
       "first_month": "1999-01",
       "last_month": "2026-09",
       "months": 333,
-      "last_price_date": "2026-10-02",
+      "last_price_date": "2026-10-21",
       "source": "yfinance"
     },
     "TBILL": {
