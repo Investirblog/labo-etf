@@ -1,6 +1,6 @@
-# Rapport qualité — 2026-11-03
+# Rapport qualité — 2026-11-04
 
-- ETF traités : 45/42 · erreurs : 0 · alertes : 0
+- ETF traités : 45/42 · erreurs : 0 · alertes : 9
 - Fenêtre commune (tous les ETF traités disponibles) : à partir de 2008-05
 
 ## Détail par ETF
@@ -95,23 +95,23 @@
 
 ### TLT — iShares 20+ Year Treasury Bond
 - Source : yfinance · couverture 2002-08 → 2026-10 (291 mois)
-- ✅ aucun problème détecté
+- ⚠️ TLT : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+5.64% → +5.22%)
 
 ### IEF — iShares 7-10 Year Treasury Bond
 - Source : yfinance · couverture 2002-08 → 2026-10 (291 mois)
-- ✅ aucun problème détecté
+- ⚠️ IEF : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+3.10% → +2.74%)
 
 ### SHY — iShares 1-3 Year Treasury Bond
 - Source : yfinance · couverture 2002-08 → 2026-10 (291 mois)
-- ✅ aucun problème détecté
+- ⚠️ SHY : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+0.92% → +0.62%)
 
 ### SHV — iShares Short Treasury Bond
 - Source : yfinance · couverture 2007-02 → 2026-10 (237 mois)
-- ✅ aucun problème détecté
+- ⚠️ SHV : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+0.38% → +0.11%)
 
 ### BIL — SPDR Bloomberg 1-3 Month T-Bill
 - Source : yfinance · couverture 2007-06 → 2026-10 (233 mois)
-- ✅ aucun problème détecté
+- ⚠️ BIL : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+0.35% → +0.07%)
 
 ### TIP — iShares TIPS Bond
 - Source : yfinance · couverture 2004-01 → 2026-10 (274 mois)
@@ -119,19 +119,19 @@
 
 ### AGG — iShares Core U.S. Aggregate Bond
 - Source : yfinance · couverture 2003-10 → 2026-10 (277 mois)
-- ✅ aucun problème détecté
+- ⚠️ AGG : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+2.29% → +1.93%)
 
 ### BND — Vanguard Total Bond Market
 - Source : yfinance · couverture 2007-05 → 2026-10 (234 mois)
-- ✅ aucun problème détecté
+- ⚠️ BND : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+2.37% → +2.01%)
 
 ### LQD — iShares iBoxx $ Investment Grade Corporate Bond
 - Source : yfinance · couverture 2002-08 → 2026-10 (291 mois)
-- ✅ aucun problème détecté
+- ⚠️ LQD : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+2.49% → +2.05%)
 
 ### HYG — iShares iBoxx $ High Yield Corporate Bond
 - Source : yfinance · couverture 2007-05 → 2026-10 (234 mois)
-- ✅ aucun problème détecté
+- ⚠️ HYG : 1 mois révisé(s) par rapport à la version précédente : 2026-10 (+0.73% → +0.28%)
 
 ### BWX — SPDR Bloomberg International Treasury Bond
 - Source : yfinance · couverture 2007-11 → 2026-10 (228 mois)
