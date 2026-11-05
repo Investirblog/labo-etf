@@ -689,7 +689,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     const eq = src(s).equity;
     const keys = Object.keys(eq);
     const pts = [{ i: mIdx(keys[0]) - 1, v: 1 }];
-    for (const k of keys) pts.push({ i: mIdx(k), v: s.equity[k] });
+    for (const k of keys) pts.push({ i: mIdx(k), v: src(s).equity[k] });
     return pts;
   }
   function slice(pts, i0, i1) { return pts.filter(p => p.i >= i0 && p.i <= i1); }
@@ -844,7 +844,8 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     if (marker && marker.i > i0 && marker.i < i1) {
       svg.append(svgEl("rect", { x: x(marker.i), y: m.t, width: W - m.r - x(marker.i), height: H - m.t - m.b, fill: "var(--pub-soft)" }));
       svg.append(svgEl("line", { x1: x(marker.i), x2: x(marker.i), y1: m.t, y2: H - m.b, stroke: "var(--pub)", "stroke-width": 1.2, "stroke-dasharray": "4 3" }));
-      const t = svgEl("text", { x: x(marker.i) + 6, y: m.t + 12, class: "ax", fill: "var(--pub)", style: "fill: var(--pub)" });
+      const nearRight = x(marker.i) > W - m.r - 110;   // étiquette ramenée à gauche du trait si elle déborderait
+      const t = svgEl("text", { x: nearRight ? x(marker.i) - 6 : x(marker.i) + 6, y: m.t + 12, class: "ax", fill: "var(--pub)", style: "fill: var(--pub)", "text-anchor": nearRight ? "end" : "start" });
       t.textContent = marker.label; svg.append(t);
     }
     // séries
