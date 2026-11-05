@@ -239,8 +239,8 @@ KELLER = [
                         "Fin de mois : moyenne du score sur les 5 dernières séances ; seul son signe compte.",
                         "0 canari négatif : 100 % S&P 500. 1 canari négatif : 50 % S&P 500, 50 % cash. 2 canaris négatifs : 100 % cash."],
               "variant_note": "Même règle que [rotationshield.be](https://rotationshield.be) : ETF américains (SPY, VWO, TIP), "
-                              "cash au taux de dépôt BCE et TOB de 0,12 % par mouvement sur le S&P 500. Les chiffres du site "
-                              "et d'ici peuvent différer légèrement selon la période et les données."}),
+                              "cash au taux de dépôt BCE et TOB de 0,12 % par mouvement sur le S&P 500. Ici, la période commune "
+                              "commence en juillet 2008 ; le site part de mars 2008 et montre une pire baisse de -15,1 % au lieu de -12,5 %."}),
     Strategy(
         id="paa", name="Protective Asset Allocation (PAA2)",
         assets=uniq(PAA_RISKY, PAA_SAFE), weights=paa, lookback=13, family="Keller",
