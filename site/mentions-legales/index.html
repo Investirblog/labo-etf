@@ -639,14 +639,11 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   const MOIS_LONG = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   const FAMILIES = ["Toutes", "Statique", "Momentum", "Tendance", "Keller", "Secteurs"];
-  const state = { window: "common", family: "Toutes", sort: { key: "sharpe", dir: -1 }, roll: 5, bench: "acwi", benchExplicit: false, ccy: "usd", cmp: null };
-  // Référence par défaut : S&P 500 sur l'historique complet (même période que RotationShield), Actions mondiales sur la période commune.
-  const autoBench = () => { if (!state.benchExplicit) state.bench = state.window === "full" ? "spy" : "acwi"; };
+  const state = { window: "common", family: "Toutes", sort: { key: "sharpe", dir: -1 }, roll: 5, bench: "acwi", ccy: "usd", cmp: null };
   let FICHES = {}, UCITS = null;
   try { const w = localStorage.getItem("esl-window"); if (w === "common" || w === "full") state.window = w;
-    const b = localStorage.getItem("esl-bench"); if (b === "acwi" || b === "spy") { state.bench = b; state.benchExplicit = true; }
+    const b = localStorage.getItem("esl-bench"); if (b === "acwi" || b === "spy") state.bench = b;
     if (localStorage.getItem("esl-ccy") === "eur") state.ccy = "eur"; } catch (e) {}
-  autoBench();
   let DATA = null, BY_ID = {}, SPY = null;
   const REF_IDS = ["acwi", "spy"];
   const REF_NAMES = { acwi: "Actions mondiales", spy: "S&P 500" };
@@ -1029,7 +1026,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     bindBench(renderBoard);
     bindCcy(renderBoard);
 
-    app.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win; autoBench();
+    app.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win;
       try { localStorage.setItem("esl-window", state.window); } catch (e) {} renderBoard(); });
     app.querySelectorAll("[data-roll]").forEach(b => b.onclick = () => { state.roll = +b.dataset.roll; renderBoard();
       app.querySelector(`[data-roll="${state.roll}"]`)?.focus(); });
@@ -1053,7 +1050,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
   }
   function bindBench(rerender) {
     app.querySelectorAll("[data-bench]").forEach(b => b.onclick = () => {
-      state.bench = b.dataset.bench; state.benchExplicit = true; try { localStorage.setItem("esl-bench", state.bench); } catch (e) {}
+      state.bench = b.dataset.bench; try { localStorage.setItem("esl-bench", state.bench); } catch (e) {}
       const y = window.scrollY; rerender(); window.scrollTo(0, y);
       app.querySelector(`[data-bench="${state.bench}"]`)?.focus({ preventScroll: true });
     });
@@ -1427,7 +1424,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
       try { history.replaceState(null, "", cmpHref(state.cmp)); } catch (e) {}
       renderCompare();
     });
-    host.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win; autoBench();
+    host.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win;
       try { localStorage.setItem("esl-window", state.window); } catch (e) {} renderCompare(); });
     bindCcy(renderCompare);
   }
@@ -1592,7 +1589,7 @@ footer { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule);
     bindBench(() => renderSheet(s));
     bindCcy(() => renderSheet(s));
 
-    app.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win; autoBench();
+    app.querySelectorAll("[data-win]").forEach(b => b.onclick = () => { state.window = b.dataset.win;
       try { localStorage.setItem("esl-window", state.window); } catch (e) {} renderSheet(s); });
     app.querySelectorAll("[data-roll]").forEach(b => b.onclick = () => { state.roll = +b.dataset.roll;
       const y = window.scrollY; renderSheet(s); window.scrollTo(0, y);
