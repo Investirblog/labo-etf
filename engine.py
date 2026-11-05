@@ -33,6 +33,15 @@ def load_returns(path: str | Path) -> pd.DataFrame:
     return df.sort_index()
 
 
+def _taxed_turnover(strategy, delta: pd.Series) -> float:
+    """Volume soumis aux frais : seuls les actifs listés dans meta « taxed » (si défini) comptent.
+    Sert à ne taxer que la TOB sur l'ETF S&P 500, et non le cash logé sur un compte épargne."""
+    taxed = strategy.meta.get("taxed")
+    if taxed:
+        delta = delta[[c for c in delta.index if c in taxed]]
+    return float(delta.abs().sum())
+
+
 def cash_series(returns: pd.DataFrame) -> pd.Series:
     """Rendement du cash : BIL, complété par les T-bills FRED (TBILL) avant son lancement."""
     s = pd.Series(np.nan, index=returns.index)
@@ -98,6 +107,8 @@ def run(strategy: Strategy, returns: pd.DataFrame, start: str | None = None,
     if missing:
         raise KeyError(f"{strategy.id} : actifs absents des données : {sorted(missing)}")
     data[CASH] = cash_series(returns)
+    if strategy.meta.get("cash_rate") == "ECBDEP":   # cash rémunéré au taux de dépôt BCE, comme sur rotationshield.be
+        data[CASH] = returns["ECBDEP"].rename(CASH)
 
     t0 = first_decision_month(strategy, returns)
     if start is not None:
@@ -116,7 +127,7 @@ def run(strategy: Strategy, returns: pd.DataFrame, start: str | None = None,
             target = pd.Series(strategy.weights(hist), dtype=float).reindex(cols, fill_value=0.0)
             if abs(target.sum() - 1) > 1e-6 or (target < -1e-9).any():
                 raise ValueError(f"{strategy.id} {t} : poids invalides {target.to_dict()}")
-            turnover = 0.0 if first else float((target - held).abs().sum())
+            turnover = 0.0 if first else _taxed_turnover(strategy, target - held)
             held = target
             first = False
         else:
