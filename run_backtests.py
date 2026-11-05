@@ -96,7 +96,7 @@ def main(argv=None) -> int:
                   f"(lance : python3 fetch_data.py --only {' '.join(m)})", file=sys.stderr)
     strategies = [s for s in strategies if not missing[s.id]]
 
-    full = {s.id: engine.run(s, returns, cost=a.cost) for s in strategies}
+    full = {s.id: engine.run(s, returns, cost=s.meta.get("cost", a.cost)) for s in strategies}
     for s in strategies:  # un ETF « signal seulement » ne doit jamais être détenu
         w = full[s.id].weights
         held = [x for x in s.meta.get("signal_only", []) if x in w and (w[x].abs() > 1e-9).any()]

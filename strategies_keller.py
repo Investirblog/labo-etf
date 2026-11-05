@@ -233,14 +233,14 @@ KELLER = [
         id="rotationshield", name="RotationShield (DAA sur le S&P 500)",
         assets=["SPY"] + RS_CANARY, weights=rotationshield, lookback=12, family="Keller", uses_cash=True,
         meta={"published": "2026-09", "author": "Nathanaël Dumortier (2026), d'après Keller & Keuning", "signal_only": RS_CANARY,
+              "cost": 0.0012, "taxed": ["SPY"], "cash_rate": "ECBDEP",
               "note": "Les deux canaris de DAA pilotent un seul actif : le S&P 500, ou du cash",
               "rules": ["Chaque jour : score 13612W (12×r1 + 4×r3 + 2×r6 + r12) des canaris VWO (émergents) et TIP (obligations indexées sur l'inflation).",
                         "Fin de mois : moyenne du score sur les 5 dernières séances ; seul son signe compte.",
                         "0 canari négatif : 100 % S&P 500. 1 canari négatif : 50 % S&P 500, 50 % cash. 2 canaris négatifs : 100 % cash."],
-              "variant_note": "Version testée ici avec les ETF américains (SPY, VWO, TIP) et les T-bills. Le site "
-                              "[rotationshield.be](https://rotationshield.be) publie le signal du mois avec des équivalents "
-                              "européens (SPYL pour le S&P 500, ETF UCITS pour les canaris) et un compte d'épargne en euros : "
-                              "son signal peut ponctuellement différer de celui-ci."}),
+              "variant_note": "Même règle que [rotationshield.be](https://rotationshield.be) : ETF américains (SPY, VWO, TIP), "
+                              "cash au taux de dépôt BCE et TOB de 0,12 % par mouvement sur le S&P 500. Les chiffres du site "
+                              "et d'ici peuvent différer légèrement selon la période et les données."}),
     Strategy(
         id="paa", name="Protective Asset Allocation (PAA2)",
         assets=uniq(PAA_RISKY, PAA_SAFE), weights=paa, lookback=13, family="Keller",
